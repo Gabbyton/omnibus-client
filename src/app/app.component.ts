@@ -9,6 +9,7 @@ import { GoogleMap } from '@angular/google-maps';
 })
 export class AppComponent implements OnInit {
   title = 'transloc-app-wrapper';
+  markers: any[] = [];
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
   zoom = 12
@@ -28,7 +29,23 @@ export class AppComponent implements OnInit {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
+      this.addMarker();
     });
+  }
+
+  addMarker() {
+    this.markers.push({
+      position: {
+        lat: this.center.lat + ((Math.random() - 0.5) * 2) / 10,
+        lng: this.center.lng + ((Math.random() - 0.5) * 2) / 10,
+      },
+      label: {
+        color: 'red',
+        text: 'Marker label ' + (this.markers.length + 1),
+      },
+      title: 'Marker title ' + (this.markers.length + 1),
+      options: { animation: google.maps.Animation.BOUNCE },
+    })
   }
 
   zoomIn() {
