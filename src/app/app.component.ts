@@ -1,7 +1,9 @@
-import { ViewChild } from '@angular/core';
+import { ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from './utils/transloc.service';
+import { of } from "rxjs";
+import { concatMap, tap, map } from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -9,13 +11,19 @@ import { TranslocService } from './utils/transloc.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'transloc-app-wrapper';
-  markers: any[] = [];
-  stops: any[] = [];
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
-  zoom = 20
-  center: google.maps.LatLngLiteral
+  title = 'transloc-app-wrapper';
+
+  markers: any[] = [];
+  stops: any[] = [];
+
+  verticesSet: any[];
+
+  isLoading: boolean;
+
+  zoom = 16;
+  center: google.maps.LatLngLiteral;
   options: google.maps.MapOptions = {
     mapTypeId: 'hybrid',
     zoomControl: false,
@@ -28,19 +36,7 @@ export class AppComponent implements OnInit {
   constructor(private transloc: TranslocService) { }
 
   ngOnInit() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      }
-      this.transloc.getStops().subscribe((data: any) => {
-        for (let element of data) {
-          this.stops.push(element);
-        }
-        console.log(this.stops);
-        this.addMarker();
-      });
-    });
+    this.initMap();
   }
 
   addMarker() {
@@ -55,7 +51,7 @@ export class AppComponent implements OnInit {
           text: stop.name,
         },
         title: stop.name,
-        options: { animation: google.maps.Animation.BOUNCE },
+        // options: { animation: google.maps.Animation.BOUNCE },
       })
     }
   }
@@ -74,5 +70,37 @@ export class AppComponent implements OnInit {
 
   click(event: google.maps.MouseEvent) {
     console.log(event)
+  }
+
+  initMap(): void {
+    this.isLoading = true;
+    const startupSeq = of(2);
+    this.verticesSet = [];
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.center = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }
+      startupSeq.pipe(
+        tap(data => console.log(data)),
+        concatMap(data => {
+          return this.transloc.getSegmentsForRoute("blah");
+        }),
+        tap((encRoute: string[]) => {
+          encRoute.forEach(encRoute => { // TODO: convert to forkJoin and assign only on subscription
+            this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
+          });
+        }),
+        concatMap(_ => {
+          return this.transloc.getStops();
+        }),
+      ).subscribe((stopData: any) => {
+        for (let element of stopData) {
+          this.stops.push(element);
+        }
+        this.addMarker();
+        this.isLoading = false;
+      });
+    });
   }
 }

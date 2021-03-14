@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, filter, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,15 @@ export class TranslocService {
         'Content-Type': 'application/json'
       }
     });
+  }
+
+  getSegmentsForRoute(routeId: string) {
+    return this.http.get(`${this.SERVER_URL}/get-segment`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).pipe(
+      map(data => Object.keys(data).map(k => data[k]))
+    );
   }
 }
