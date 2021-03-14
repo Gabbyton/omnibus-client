@@ -1,6 +1,16 @@
-# TranslocAppWrapper
+# CWRU Omnibus
+
+Angular web application for tracking shuttles for Case Western Reserve University 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.7.
+
+## Development setup
+
+To keep API keys secret during development, we've decided to replace the index file with a duplicate one with the key during every build. To be able to use this app in development, copy the `index.html` file and paste it as `index-dev.html` in the same `src` folder.
+
+**NOTE:** this project is *obviously* not set up for production yet. We will update the configuration for a production scenario in the future.
+
+After this step, you can proceed with the instructions in section below:
 
 ## Development server
 
