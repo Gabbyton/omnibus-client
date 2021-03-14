@@ -51,14 +51,14 @@ export class MapComponent implements OnInit {
     this.markers = [];
     const finalStops = this.stops.filter(stop => stop.routes.indexOf(this.currentRoute) > -1);
     for (let stop of finalStops)
-      this.markers.push(new Marker(stop.location, 'red', stop.name,stop.name));
+      this.markers.push(new Marker(stop.location, 'red', stop.name, stop.name));
     this.displayMarkers = this.markers.map(marker => marker.getMarkerMapsObject());
   }
 
   updateRoutes(): void { // FIXME: store all routes in memory/cache for quick loading
-    this.transloc.getSegmentsForRoute(this.currentRoute).subscribe((encRoutes:string[]) => {
+    this.transloc.getSegmentsForRoute(this.currentRoute).subscribe((encRoutes: string[]) => {
       this.verticesSet = [];
-      encRoutes.forEach(encRoute=> {
+      encRoutes.forEach(encRoute => {
         this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
       })
     });
@@ -108,4 +108,6 @@ export class MapComponent implements OnInit {
     this.updateMarkers();
     this.updateRoutes();
   }
+
+  // TODO: add angular animations to expand button
 }
