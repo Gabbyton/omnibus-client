@@ -31,7 +31,10 @@ export class Marker implements MarkerInterface {
         color: this.labelColor,
         text: this.text,
       },
-      title: this.title
+      title: this.title,
+      options: {
+        icon: 'assets/rec-sm.png'
+      }
       // TODO: add optional options
     }
   }
