@@ -33,7 +33,10 @@ export class Marker implements MarkerInterface {
       },
       title: this.title,
       options: {
-        icon: 'assets/rec-sm.png'
+        icon: {
+          url: 'assets/rec-sm.png',
+          scaledSize: new google.maps.Size(20, 20)
+        }
       }
       // TODO: add optional options
     }
