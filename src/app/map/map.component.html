@@ -1,0 +1,17 @@
+<google-map height="100vh" width="100%" [zoom]="zoom" [center]="center" [options]="options" (mapClick)="click($event)" *ngIf="!isLoading">
+    <map-marker
+    *ngFor="let marker of markers"
+    [position]="marker.position"
+    [label]="marker.label"
+    [title]="marker.title"
+    [options]="marker.options"
+  >
+  </map-marker>
+  <map-polyline *ngFor="let piece of verticesSet; index as i" [path]="piece"></map-polyline>
+  </google-map>
+  
+  <!-- Use custom zoom buttons -->
+  <button (click)="zoomIn()">Zoom in</button>
+  <button (click)="zoomOut()">Zoom out</button>
+  <button (click)="logCenter()">Log Center</button>
+  <button (click)="changeRoute('8004946')">Change to Green</button>
