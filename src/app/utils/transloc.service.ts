@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Route } from '@angular/router';
 import { map, filter, tap } from 'rxjs/operators';
+import { Stop } from './stop';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class TranslocService {
   constructor(private http: HttpClient) { }
 
   getRoutes() {
-    return this.http.get(`${this.SERVER_URL}/get-routes`, {
+    return this.http.get<Route>(`${this.SERVER_URL}/get-routes`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -20,7 +22,7 @@ export class TranslocService {
   }
 
   getStops() {
-    return this.http.get(`${this.SERVER_URL}/get-stops`, {
+    return this.http.get<Stop>(`${this.SERVER_URL}/get-stops`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -28,7 +30,7 @@ export class TranslocService {
   }
 
   getSegmentsForRoute(routeId: string) {
-    return this.http.get(`${this.SERVER_URL}/get-segment`, {
+    return this.http.get(`${this.SERVER_URL}/get-segment?route=${routeId}`, {
       headers: {
         'Content-Type': 'application/json'
       }

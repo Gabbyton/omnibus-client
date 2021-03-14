@@ -4,6 +4,8 @@ import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
 import { of } from "rxjs";
 import { concatMap, tap, map } from "rxjs/operators";
+import { Marker } from '../utils/marker';
+import { Stop } from '../utils/stop';
 
 @Component({
   selector: 'app-map',
@@ -13,19 +15,18 @@ import { concatMap, tap, map } from "rxjs/operators";
 export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
-  markers: any[] = [];
-  stops: any[] = [];
-
-  currentRoute: string;
-
+  markers: Marker[];
+  displayMarkers: any[];
+  stops: Stop[];
   verticesSet: any[];
 
+  currentRoute: string;
   isLoading: boolean;
 
   zoom = 16;
   center: google.maps.LatLngLiteral;
   options: google.maps.MapOptions = {
-    mapTypeId: 'hybrid',
+    mapTypeId: 'roadmap',
     zoomControl: false,
     scrollwheel: false,
     disableDoubleClickZoom: true,
@@ -36,57 +37,53 @@ export class MapComponent implements OnInit {
   constructor(private transloc: TranslocService) { }
 
   ngOnInit() {
-    this.currentRoute = "8004962";
+    this.currentRoute = "8004946";
+    this.markers = [];
+    this.displayMarkers = [];
+    this.stops = [];
+    this.verticesSet = [];
+    this.isLoading = false;
     this.initMap();
   }
 
-  addMarker() {
+  updateMarkers(): void {
+    this.displayMarkers = [];
+    this.markers = [];
     const finalStops = this.stops.filter(stop => stop.routes.indexOf(this.currentRoute) > -1);
-    for (let stop of finalStops) {
-      this.markers.push({
-        position: {
-          lat: stop.location[0],
-          lng: stop.location[1],
-        },
-        label: {
-          color: 'red',
-          text: stop.name,
-        },
-        title: stop.name,
-        // options: { animation: google.maps.Animation.BOUNCE },
-      })
-    }
+    for (let stop of finalStops)
+      this.markers.push(new Marker(stop.location, 'red', stop.name,stop.name));
+    this.displayMarkers = this.markers.map(marker => marker.getMarkerMapsObject());
   }
 
-  zoomIn() {
+  updateRoutes(): void { // FIXME: store all routes in memory/cache for quick loading
+    this.transloc.getSegmentsForRoute(this.currentRoute).subscribe((encRoutes:string[]) => {
+      this.verticesSet = [];
+      encRoutes.forEach(encRoute=> {
+        this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
+      })
+    });
+  }
+
+  zoomIn(): void {
     if (this.zoom < this.options.maxZoom) this.zoom++
   }
 
-  zoomOut() {
+  zoomOut(): void {
     if (this.zoom > this.options.minZoom) this.zoom--
-  }
-
-  logCenter() {
-    console.log(JSON.stringify(this.map.getCenter()))
-  }
-
-  click(event: google.maps.MouseEvent) {
-    console.log(event)
   }
 
   initMap(): void {
     this.isLoading = true;
     const startupSeq = of(2);
-    this.verticesSet = [];
     navigator.geolocation.getCurrentPosition((position) => {
       this.center = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
+
       startupSeq.pipe(
-        tap(data => console.log(data)),
-        concatMap(data => {
-          return this.transloc.getSegmentsForRoute("blah");
+        concatMap(_ => {
+          return this.transloc.getSegmentsForRoute(this.currentRoute);
         }),
         tap((encRoute: string[]) => {
           encRoute.forEach(encRoute => { // TODO: convert to forkJoin and assign only on subscription
@@ -100,7 +97,7 @@ export class MapComponent implements OnInit {
         for (let element of stopData) {
           this.stops.push(element);
         }
-        this.addMarker();
+        this.updateMarkers();
         this.isLoading = false;
       });
     });
@@ -108,6 +105,7 @@ export class MapComponent implements OnInit {
 
   changeRoute(newRoute: string): void {
     this.currentRoute = newRoute;
-    this.addMarker();
+    this.updateMarkers();
+    this.updateRoutes();
   }
 }
