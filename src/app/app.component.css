@@ -1,0 +1,10 @@
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+mat-toolbar {
+    position: fixed;
+    top: 0;
+    /* place the toolbar on top all the time */
+    z-index: 100;
+}
