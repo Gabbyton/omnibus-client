@@ -4,8 +4,8 @@ import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
 import { of } from "rxjs";
 import { concatMap, tap, map } from "rxjs/operators";
-import { Marker } from '../utils/marker';
-import { Stop } from '../utils/stop';
+import { Marker } from '../utils/models/marker';
+import { Stop } from '../utils/models/stop';
 
 @Component({
   selector: 'app-map',
