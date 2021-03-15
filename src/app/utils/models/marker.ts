@@ -4,6 +4,7 @@ interface MarkerInterface {
   text: string;
   title: string;
   options?: any;
+  id?: number;
 }
 
 export class Marker implements MarkerInterface {
@@ -12,17 +13,20 @@ export class Marker implements MarkerInterface {
   text: string;
   title: string;
   options?: any;
+  id?: number;
 
-  constructor(position: number[], labelColor: string, text: string, title: string, options?: any) {
+  constructor(position: number[], labelColor: string, text: string, title: string, options?: any, id?: number) {
     this.position = position;
     this.labelColor = labelColor;
     this.text = text;
     this.title = title;
     this.options = options; // or null
+    this.id = id;
   }
 
   public getMarkerMapsObject(): any {
     return {
+      id: this.id,
       position: {
         lat: this.position[0],
         lng: this.position[1],

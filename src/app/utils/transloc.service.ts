@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Route } from '@angular/router';
 import { map, filter, tap } from 'rxjs/operators';
 import { Stop } from './models/stop';
+import { Vehicle } from './models/vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +38,13 @@ export class TranslocService {
     }).pipe(
       map(data => Object.keys(data).map(k => data[k]))
     );
+  }
+
+  getArrivalData() {
+    return this.http.get<Vehicle[]>(`${this.SERVER_URL}/get-arrivals`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }

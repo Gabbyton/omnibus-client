@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
-import { of } from "rxjs";
-import { concatMap, tap, map } from "rxjs/operators";
+import { of, timer } from "rxjs";
+import { concatMap, tap, map, filter, take } from "rxjs/operators";
 import { Marker } from '../utils/models/marker';
 import { Stop } from '../utils/models/stop';
+import { Vehicle } from '../utils/models/vehicle';
 
 @Component({
   selector: 'app-map',
@@ -19,6 +20,7 @@ export class MapComponent implements OnInit {
   displayMarkers: any[];
   stops: Stop[];
   verticesSet: any[];
+  displayBuses: any[];
 
   currentRoute: string;
   isLoading: boolean;
@@ -37,12 +39,13 @@ export class MapComponent implements OnInit {
   constructor(private transloc: TranslocService) { }
 
   ngOnInit() {
-    this.currentRoute = "8004946";
+    this.currentRoute = "8004958";
     this.markers = [];
     this.displayMarkers = [];
     this.stops = [];
     this.verticesSet = [];
     this.isLoading = false;
+    this.displayBuses = [];
     this.initMap();
   }
 
@@ -80,7 +83,6 @@ export class MapComponent implements OnInit {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
-
       startupSeq.pipe(
         concatMap(_ => {
           return this.transloc.getSegmentsForRoute(this.currentRoute);
@@ -99,6 +101,7 @@ export class MapComponent implements OnInit {
         }
         this.updateMarkers();
         this.isLoading = false;
+        this.getCurrentBusPositions().subscribe(_ => {});
       });
     });
   }
@@ -107,6 +110,34 @@ export class MapComponent implements OnInit {
     this.currentRoute = newRoute;
     this.updateMarkers();
     this.updateRoutes();
+  }
+
+  getCurrentBusPositions() {
+    return timer(0, 500).pipe(
+      concatMap(_ => {
+        return this.transloc.getArrivalData().pipe(
+          map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == parseInt(this.currentRoute))),
+          tap((busArray: Vehicle[]) => {
+            const busIds = this.displayBuses.map(bus => bus.id);
+            console.log(busIds);
+            busArray.forEach(bus => {
+              if(busIds.indexOf( bus.id ) < 0) {
+                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '',bus.id).getMarkerMapsObject();
+                console.log(newDisplayBus);
+                this.displayBuses.push(newDisplayBus);
+              }
+              else { // TODO: replace array with hashmap, figure out how to update the display
+                const replaceBus = this.displayBuses.filter(currentBus => currentBus.id == bus.id)[0];
+                console.log(replaceBus);
+                replaceBus.position.lat = bus.position[0];
+                replaceBus.position.lng = bus.position[1];
+              }
+            });
+          }),
+          take(1)
+        );
+      }),
+    )
   }
 
   // TODO: add angular animations to expand button
