@@ -9,14 +9,27 @@
   <map-polyline *ngFor="let segment of verticesSet; index as i" [path]="segment"></map-polyline>
 </google-map>
 
-<div class="bottom-panel">
+<div class="bottom-panel" [ngStyle]="{'height.vh': bottomPanelHeight}">
   <div class="expand-button">
-    <button mat-icon-button>
-      <mat-icon>arrow_drop_up</mat-icon>
+    <button mat-icon-button (click)="expandBottomPanel()">
+      <mat-icon>{{bottomPanelHeight != DEFAULT_BOTTOM_PANEL_HEIGHT ? 'arrow_drop_down':'arrow_drop_up'}}</mat-icon>
     </button>
   </div>
-  <!-- Use custom zoom buttons -->
-  <button (click)="zoomIn()">Zoom in</button>
-  <button (click)="zoomOut()">Zoom out</button>
-  <button (click)="changeRoute('8004962')">Change to Green</button>
+  <div class="info-panel">
+    <div class="col">
+      <img src="assets/bus-icon.svg" alt="Bus Icon" style="height: 32px;">
+    </div>
+    <div class="col left">
+      <p>
+        <b>Scheduled</b><br>
+        6:20 PM
+      </p>
+    </div>
+    <div class="col right">
+      <p>
+        <b>ETA</b><br>
+        7 min
+      </p>
+    </div>
+  </div>
 </div>

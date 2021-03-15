@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
@@ -18,10 +18,16 @@ export class MapComponent implements OnInit {
 
   markers: Marker[];
   displayMarkers: any[];
+
   stops: Stop[];
   verticesSet: any[];
+
   displayBuses: number[];
   busMap: Map<number, any>;
+
+  bottomPanelHeight: number;
+  DEFAULT_BOTTOM_PANEL_HEIGHT: number;
+  EXPANDED_BOTTOM_PANEL_HEIGHT: number;
 
   currentRoute: string;
   isLoading: boolean;
@@ -39,15 +45,32 @@ export class MapComponent implements OnInit {
   constructor(private transloc: TranslocService) { }
 
   ngOnInit() {
-    this.currentRoute = "8004946";
+    // set default parameters
+    this.currentRoute = "8004946"; // TODO: change in settings, store in local storage
+    this.DEFAULT_BOTTOM_PANEL_HEIGHT = 25;
+    this.EXPANDED_BOTTOM_PANEL_HEIGHT = 50;
+
+    // initialize dynamic variables
+    this.isLoading = false;
+
     this.markers = [];
     this.displayMarkers = [];
+
     this.stops = [];
     this.verticesSet = [];
-    this.isLoading = false;
+
     this.displayBuses = [];
     this.busMap = new Map();
+
+    this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     this.initMap();
+  }
+
+  expandBottomPanel(): void {
+    if(this.bottomPanelHeight != this.DEFAULT_BOTTOM_PANEL_HEIGHT)
+      this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
+    else
+      this.bottomPanelHeight = this.EXPANDED_BOTTOM_PANEL_HEIGHT;
   }
 
   updateMarkers(): void {
@@ -66,14 +89,6 @@ export class MapComponent implements OnInit {
         this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
       })
     });
-  }
-
-  zoomIn(): void {
-    if (this.zoom < this.options.maxZoom) this.zoom++
-  }
-
-  zoomOut(): void {
-    if (this.zoom > this.options.minZoom) this.zoom--
   }
 
   initMap(): void {
@@ -102,7 +117,7 @@ export class MapComponent implements OnInit {
         }
         this.updateMarkers();
         this.isLoading = false;
-        this.getCurrentBusPositions().subscribe(_ => {});
+        this.getCurrentBusPositions().subscribe(_ => { });
       });
     });
   }
@@ -120,14 +135,14 @@ export class MapComponent implements OnInit {
           map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == parseInt(this.currentRoute))),
           tap((busArray: Vehicle[]) => {
             busArray.forEach(bus => {
-              if(this.displayBuses.indexOf( bus.id ) < 0) {
-                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '',bus.id,'vehicle').getMarkerMapsObject();
+              if (this.displayBuses.indexOf(bus.id) < 0) {
+                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '', bus.id, 'vehicle').getMarkerMapsObject();
                 this.displayBuses.push(bus.id);
                 this.busMap.set(bus.id, newDisplayBus);
               }
               else { // FIXME: marker position not updating
                 const replaceBus = this.busMap.get(bus.id);
-                replaceBus.position = new google.maps.LatLng(bus.position[0],bus.position[1]);
+                replaceBus.position = new google.maps.LatLng(bus.position[0], bus.position[1]);
               }
             });
           }),
