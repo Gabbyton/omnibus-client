@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
@@ -20,7 +20,8 @@ export class MapComponent implements OnInit {
   displayMarkers: any[];
   stops: Stop[];
   verticesSet: any[];
-  displayBuses: any[];
+  displayBuses: number[];
+  busMap: Map<number, any>;
 
   currentRoute: string;
   isLoading: boolean;
@@ -36,16 +37,29 @@ export class MapComponent implements OnInit {
     minZoom: 8,
   }
 
-  constructor(private transloc: TranslocService) { }
+  svgMarker = {
+    path:
+      "M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+    fillColor: "blue",
+    fillOpacity: 0.6,
+    strokeWeight: 0,
+    rotation: 0,
+    scale: 2,
+    anchor: new google.maps.Point(15, 30),
+  };
+
+  constructor(private transloc: TranslocService,
+    private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.currentRoute = "8004958";
+    this.currentRoute = "8004946";
     this.markers = [];
     this.displayMarkers = [];
     this.stops = [];
     this.verticesSet = [];
     this.isLoading = false;
     this.displayBuses = [];
+    this.busMap = new Map();
     this.initMap();
   }
 
@@ -118,20 +132,19 @@ export class MapComponent implements OnInit {
         return this.transloc.getArrivalData().pipe(
           map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == parseInt(this.currentRoute))),
           tap((busArray: Vehicle[]) => {
-            const busIds = this.displayBuses.map(bus => bus.id);
-            console.log(busIds);
             busArray.forEach(bus => {
-              if(busIds.indexOf( bus.id ) < 0) {
-                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '',bus.id).getMarkerMapsObject();
-                console.log(newDisplayBus);
-                this.displayBuses.push(newDisplayBus);
+              if(this.displayBuses.indexOf( bus.id ) < 0) {
+                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '',bus.id,'vehicle').getMarkerMapsObject();
+                this.displayBuses.push(bus.id);
+                this.busMap.set(bus.id, newDisplayBus);
               }
-              else { // TODO: replace array with hashmap, figure out how to update the display
-                const replaceBus = this.displayBuses.filter(currentBus => currentBus.id == bus.id)[0];
+              else { // FIXME: marker position not updating
+                const replaceBus = this.busMap.get(bus.id);
+                console.log(`replace bus:`);
                 console.log(replaceBus);
-                replaceBus.position.lat = bus.position[0];
-                replaceBus.position.lng = bus.position[1];
+                replaceBus.position = new google.maps.LatLng(bus.position[0],bus.position[1]);
               }
+              this.changeDetectorRef.detectChanges();
             });
           }),
           take(1)

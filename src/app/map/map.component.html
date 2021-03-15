@@ -3,8 +3,8 @@
   <map-marker *ngFor="let marker of displayMarkers" [position]="marker.position" [label]="marker.label"
     [title]="marker.title" [options]="marker.options">
   </map-marker>
-  <map-marker *ngFor="let bus of displayBuses" [position]="bus.position" [label]="bus.label"
-    [title]="bus.title">
+  <map-marker *ngFor="let busId of displayBuses" [position]="busMap.get(busId).position"
+    [label]="busMap.get(busId).label" [title]="busMap.get(busId).title" [options]="busMap.get(busId).options">
   </map-marker>
   <map-polyline *ngFor="let segment of verticesSet; index as i" [path]="segment"></map-polyline>
 </google-map>

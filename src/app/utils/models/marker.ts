@@ -14,14 +14,16 @@ export class Marker implements MarkerInterface {
   title: string;
   options?: any;
   id?: number;
+  type: string;
 
-  constructor(position: number[], labelColor: string, text: string, title: string, options?: any, id?: number) {
+  constructor(position: number[], labelColor: string, text: string, title: string, options?: any, id?: number, type?: string) {
     this.position = position;
     this.labelColor = labelColor;
     this.text = text;
     this.title = title;
     this.options = options; // or null
     this.id = id;
+    this.type = type;
   }
 
   public getMarkerMapsObject(): any {
@@ -33,14 +35,15 @@ export class Marker implements MarkerInterface {
       },
       label: {
         color: this.labelColor,
-        text: this.text,
+        text: {},
       },
       title: this.title,
       options: {
         icon: {
-          url: 'assets/rec-sm.png',
-          scaledSize: new google.maps.Size(20, 20)
-        }
+          url: `assets/bus-${!!this.type? this.type:'stop'}.svg`,
+          scaledSize: (this.type == 'vehicle' ? new google.maps.Size(50, 50) : new google.maps.Size(30, 30))
+        },
+        zIndex: (this.type == 'vehicle' ? 100 : 10)
       }
       // TODO: add optional options
     }
