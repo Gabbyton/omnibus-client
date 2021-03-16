@@ -13,10 +13,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import { RouteSelectComponent } from './sidenav/route-select/route-select.component';
 @NgModule({
   declarations: [
     AppComponent,
-    MapComponent
+    MapComponent,
+    RouteSelectComponent
   ],
   imports: [
     BrowserModule,
