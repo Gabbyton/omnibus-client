@@ -15,16 +15,15 @@ export class RouteSelectComponent implements OnInit {
 
   ngOnInit(): void {
     this.displayRoutes = [];
-    console.log('I have initialized');
     this.translocService.allRoutes.subscribe(allRoutes => {
       this.displayRoutes = allRoutes;
-      console.log(this.displayRoutes);
     });
   }
 
   selectRoute(newRouteId: string) {
-    console.log(`selected route: ${newRouteId}`);
-    this.translocService.setGlobalCurrentRoute(parseInt(newRouteId));
+    this.translocService.setGlobalCurrentRouteNumber(parseInt(newRouteId));
+    const routeName: string = this.displayRoutes.filter(route => route.route_id == newRouteId)[0].short_name;
+    this.translocService.setGlobalCurrentRouteName(routeName);
   }
 
 }

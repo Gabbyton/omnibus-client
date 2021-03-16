@@ -14,7 +14,8 @@ export class TranslocService {
   SERVER_URL = 'http://localhost:5003';
 
   allRoutes: BehaviorSubject<Route[]> = new BehaviorSubject([]);
-  currentRoute: BehaviorSubject<number> = new BehaviorSubject(8004946);
+  currentRouteNumber: BehaviorSubject<number> = new BehaviorSubject(8004946);
+  currentRouteName: BehaviorSubject<string> = new BehaviorSubject("Greenlink"); // TODO: set defaults here instead
 
   constructor(private http: HttpClient) { }
 
@@ -22,9 +23,12 @@ export class TranslocService {
     this.allRoutes.next(allNewRoutes);
   }
 
-  setGlobalCurrentRoute(newCurrentRoute: number) {
-    console.log(`current route broadcast: ${newCurrentRoute}`);
-    this.currentRoute.next(newCurrentRoute);
+  setGlobalCurrentRouteNumber(newCurrentRouteNumber: number) {
+    this.currentRouteNumber.next(newCurrentRouteNumber);
+  }
+
+  setGlobalCurrentRouteName(newCurrentRouteName: string) {
+    this.currentRouteName.next(newCurrentRouteName);
   }
 
   getRoutes() {

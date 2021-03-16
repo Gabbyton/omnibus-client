@@ -123,7 +123,6 @@ export class MapComponent implements OnInit {
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of
     // FIXME: alert component to show loading while any process is executing
-    console.log(`route will change to: ${newRoute}`);
     this.updateMarkers(newRoute);
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
@@ -151,7 +150,6 @@ export class MapComponent implements OnInit {
     prefetch.pipe(
       concatMap(_ => this.transloc.getRoutes()),
       tap(allRoutes => {
-        console.log(allRoutes);
         this.transloc.setGlobalRoutes(allRoutes)
       }),
       concatMap(allRoutes => {
@@ -170,7 +168,7 @@ export class MapComponent implements OnInit {
       this.updateRoutes(routeId);
       this.startBusTimer(routeId);
 
-      this.transloc.currentRoute.subscribe(newCurrentRoute => {
+      this.transloc.currentRouteNumber.subscribe(newCurrentRoute => {
         this.changeRoute(newCurrentRoute);
       });
       this.initMap(routeId);
