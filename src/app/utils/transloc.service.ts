@@ -14,15 +14,17 @@ export class TranslocService {
   SERVER_URL = 'http://localhost:5003';
 
   allRoutes: BehaviorSubject<Route[]> = new BehaviorSubject([]);
+  currentRoute: BehaviorSubject<number> = new BehaviorSubject(8004946);
 
   constructor(private http: HttpClient) { }
 
-  get globalRoutes(): BehaviorSubject<Route[]> {
-    return this.allRoutes;
-  }
-
   setGlobalRoutes(allNewRoutes: Route[]): void {
     this.allRoutes.next(allNewRoutes);
+  }
+
+  setGlobalCurrentRoute(newCurrentRoute: number) {
+    console.log(`current route broadcast: ${newCurrentRoute}`);
+    this.currentRoute.next(newCurrentRoute);
   }
 
   getRoutes() {

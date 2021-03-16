@@ -58,7 +58,6 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // set default parameters
-    this.currentRoute = 8004946; // TODO: change in settings, store in local storage
     this.DEFAULT_BOTTOM_PANEL_HEIGHT = 25;
     this.EXPANDED_BOTTOM_PANEL_HEIGHT = 50;
 
@@ -76,12 +75,11 @@ export class MapComponent implements OnInit {
     this.allSegments = new Map();
     this.allStops = [];
     this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
-
     this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
+    this.currentRoute = 8004946;
     this.prefetchMapData(this.currentRoute);
   }
 
-  // TODO: program the buttons for the different routes
   // TODO: assign buttons to route setting methods
   // TODO: add color assignments to routes
   // TODO: add error handling to transloc data retrievals
@@ -122,6 +120,7 @@ export class MapComponent implements OnInit {
   }
 
   changeRoute(newRoute: number): void {
+    console.log(`route will change to: ${newRoute}`);
     this.updateMarkers(newRoute);
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
@@ -163,6 +162,10 @@ export class MapComponent implements OnInit {
       this.updateMarkers(routeId);
       this.updateRoutes(routeId);
       this.startBusTimer(routeId);
+
+      this.transloc.currentRoute.subscribe(newCurrentRoute => {
+        this.changeRoute(newCurrentRoute);
+      });
       this.initMap(routeId);
     });
   }

@@ -16,11 +16,15 @@ export class RouteSelectComponent implements OnInit {
   ngOnInit(): void {
     this.displayRoutes = [];
     console.log('I have initialized');
-    
-    this.translocService.globalRoutes.subscribe(allRoutes => {
+    this.translocService.allRoutes.subscribe(allRoutes => {
       this.displayRoutes = allRoutes;
       console.log(this.displayRoutes);
     });
+  }
+
+  selectRoute(newRouteId: string) {
+    console.log(`selected route: ${newRouteId}`);
+    this.translocService.setGlobalCurrentRoute(parseInt(newRouteId));
   }
 
 }
