@@ -13,7 +13,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatSidenavModule } from "@angular/material/sidenav";
+import {MatRippleModule} from '@angular/material/core';
+import { MatChipsModule } from "@angular/material/chips";
+
 import { RouteSelectComponent } from './sidenav/route-select/route-select.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +35,9 @@ import { RouteSelectComponent } from './sidenav/route-select/route-select.compon
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatRippleModule,
+    MatChipsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
