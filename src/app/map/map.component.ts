@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
-import { concat, forkJoin, of, timer } from "rxjs";
-import { concatMap, tap, map, filter, take } from "rxjs/operators";
+import { BehaviorSubject, forkJoin, Observable, of, Subscription, timer } from "rxjs";
+import { concatMap, take } from "rxjs/operators";
 import { Marker } from '../utils/models/marker';
 import { Stop } from '../utils/models/stop';
 import { Route } from '../utils/models/route';
@@ -17,26 +17,31 @@ import { Vehicle } from '../utils/models/vehicle';
 export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
+  // fields containing map data
   allStops: Stop[];
   allRoutes: Route[];
-  allSegments: Map<number, string>;
+  allSegments: Map<number, any[]>;
+  allVehicles: BehaviorSubject<Vehicle[]>;
 
-  markers: Marker[];
+  // field for rendering
   displayMarkers: any[];
+  drawSegmentSet: any[];
 
-  currentStops: Stop[];
-  verticesSet: any[];
-
-  displayBuses: number[];
+  displayBusIds: number[];
   busMap: Map<number, any>;
+  busTimerSubs: Subscription;
 
+  currentRoute: number;
+
+
+  // ui fields
   bottomPanelHeight: number;
   DEFAULT_BOTTOM_PANEL_HEIGHT: number;
   EXPANDED_BOTTOM_PANEL_HEIGHT: number;
 
-  currentRoute: string;
   isLoading: boolean;
 
+  // map fields
   zoom = 16;
   center: google.maps.LatLngLiteral;
   options: google.maps.MapOptions = {
@@ -53,33 +58,29 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // set default parameters
-    this.currentRoute = "8004946"; // TODO: change in settings, store in local storage
+    this.currentRoute = 8004946; // TODO: change in settings, store in local storage
     this.DEFAULT_BOTTOM_PANEL_HEIGHT = 25;
     this.EXPANDED_BOTTOM_PANEL_HEIGHT = 50;
 
     // initialize dynamic variables
     this.isLoading = false;
-
-    this.markers = [];
     // TODO: switch to one array for display markers
     this.displayMarkers = [];
-    this.currentStops = [];
-    this.verticesSet = [];
+    this.drawSegmentSet = [];
 
-    this.displayBuses = [];
+    this.displayBusIds = [];
     this.busMap = new Map();
 
     // initialize variables containing all data
     this.allRoutes = [];
     this.allSegments = new Map();
     this.allStops = [];
+    this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
 
     this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
-    this.prefetchMapData();
-    // this.initMap();
+    this.prefetchMapData(this.currentRoute);
   }
-  // TODO: change all renders to accept the route parameter
-  // TODO: have methods update whenever the current route parameter changes
+
   // TODO: program the buttons for the different routes
   // TODO: assign buttons to route setting methods
   // TODO: add color assignments to routes
@@ -94,101 +95,88 @@ export class MapComponent implements OnInit {
       this.bottomPanelHeight = this.EXPANDED_BOTTOM_PANEL_HEIGHT;
   }
 
-  updateMarkers(): void {
+  updateMarkers(routeId: number): void {
     this.displayMarkers = [];
-    const finalStops = this.currentStops.filter(stop => stop.routes.indexOf(this.currentRoute) > -1);
-    for (let stop of finalStops)
+    const finalStops = this.allStops.filter(stop => stop.routes.indexOf(routeId.toString()) > -1);
+    for (let stop of finalStops) {
       this.displayMarkers.push(new Marker(stop.location, 'red', stop.name, stop.name).getMarkerMapsObject());
+    }
   }
 
-  updateRoutes(): void { // FIXME: store all routes in memory/cache for quick loading
-    this.transloc.getSegmentsForRoute(this.currentRoute).subscribe((encRoutes: string[]) => {
-      this.verticesSet = [];
-      encRoutes.forEach(encRoute => {
-        this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
-      })
+  updateRoutes(routeId: number): void {
+    this.drawSegmentSet = this.allSegments.get(routeId);
+  }
+
+  updateBuses(vehicles: Vehicle[]): void {
+    vehicles.forEach(bus => {
+      if (this.busMap.get(bus.id) == undefined) {
+        const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '', bus.id, 'vehicle').getMarkerMapsObject();
+        this.displayBusIds.push(bus.id);
+        this.busMap.set(bus.id, newDisplayBus);
+      }
+      else {
+        const replaceBus = this.busMap.get(bus.id);
+        replaceBus.position = new google.maps.LatLng(bus.position[0], bus.position[1]);
+      }
     });
   }
 
-  prefetchMapData() {
+  changeRoute(newRoute: number): void {
+    this.updateMarkers(newRoute);
+    this.updateRoutes(newRoute);
+    this.busTimerSubs.unsubscribe();
+    this.startBusTimer(newRoute);
+    this.currentRoute = newRoute;
+  }
+
+  initMap(routeId: number) {
+    this.isLoading = true;
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.center = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }
+    });
+  }
+
+  prefetchMapData(routeId: number) {
+    this.isLoading = true;
     const prefetch = of(3);
     prefetch.pipe(
       concatMap(_ => this.transloc.getRoutes()),
       concatMap(allRoutes => {
         return forkJoin({
           stops: this.transloc.getStops(),
-          routes: this.transloc.getRoutes(),
+          routes: this.transloc.getRoutes(), // TODO: pass the retrieved route array instead
           segments: this.transloc.getSegmentsForAllRoutes(allRoutes)
         })
       })
     ).subscribe(prefetchedData => {
       this.allRoutes = prefetchedData.routes;
-      this.allStops = prefetchedData.stops;
+      this.allStops = prefetchedData.stops; // TODO: save all stops to a hashmap
       this.allSegments = prefetchedData.segments;
+
+      this.updateMarkers(routeId);
+      this.updateRoutes(routeId);
+      this.startBusTimer(routeId);
+      this.initMap(routeId);
     });
   }
 
-  // initMap(): void {
-  //   this.isLoading = true;
-  //   const startupSeq = of(2);
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     this.center = {
-  //       lat: position.coords.latitude,
-  //       lng: position.coords.longitude,
-  //     }
-  //     startupSeq.pipe(
-  //       concatMap(_ => {
-  //         return this.transloc.getSegmentsForRoute(this.currentRoute);
-  //       }),
-  //       tap((encRoute: string[]) => {
-  //         encRoute.forEach(encRoute => { // TODO: convert to forkJoin and assign only on subscription
-  //           this.verticesSet.push(google.maps.geometry.encoding.decodePath(encRoute));
-  //         });
-  //       }),
-  //       concatMap(_ => {
-  //         return this.transloc.getStops();
-  //       }),
-  //     ).subscribe((stopData: any) => {
-  //       for (let element of stopData) {
-  //         this.stops.push(element);
-  //       }
-  //       this.updateMarkers();
-  //       this.isLoading = false;
-  //       console.log(`empty busMap key: ${this.busMap.get(-2)}`);
-  //       this.getCurrentBusPositions().subscribe(_ => { });
-  //     });
-  //   });
-  // }
-
-  changeRoute(newRoute: string): void {
-    this.currentRoute = newRoute;
-    this.updateMarkers();
-    this.updateRoutes();
+  startBusTimer(routeId: number): void {
+    this.busTimerSubs = this.getCurrentBusPositions(routeId).subscribe(allVehicleData => {
+      this.allVehicles.next(allVehicleData);
+      this.allVehicles.subscribe(vehicles => {
+        this.updateBuses(vehicles)
+      });
+      this.isLoading = false; // TODO: find a better place for this
+    });
   }
 
-  getCurrentBusPositions() {
+  getCurrentBusPositions(routeId: number): Observable<any> {
     return timer(0, 500).pipe(
-      concatMap(_ => {
-        return this.transloc.getArrivalData().pipe(
-          map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == parseInt(this.currentRoute))),
-          tap((busArray: Vehicle[]) => {
-            busArray.forEach(bus => {
-              if (this.busMap.get(bus.id) == undefined) {
-                const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '', bus.id, 'vehicle').getMarkerMapsObject();
-                this.displayBuses.push(bus.id);
-                this.busMap.set(bus.id, newDisplayBus);
-              }
-              else { // FIXME: marker position not updating
-                const replaceBus = this.busMap.get(bus.id);
-                replaceBus.position = new google.maps.LatLng(bus.position[0], bus.position[1]);
-              }
-            });
-          }),
-          take(1)
-        );
-      }),
-    )
+      concatMap(_ => this.transloc.getArrivalData(routeId).pipe(take(1))),
+    );
   }
-
   // TODO: add angular animations to expand button
 }

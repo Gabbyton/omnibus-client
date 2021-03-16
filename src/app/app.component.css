@@ -9,6 +9,10 @@
     z-index: 100;
 }
 
+.route-selection {
+    width: 80vw;
+}
+
 .botbar {
     position: fixed;
     bottom: 0;
