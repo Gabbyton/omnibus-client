@@ -42,19 +42,18 @@ export class MapComponent implements OnInit {
   isLoading: boolean;
 
   // map fields
-  zoom = 16;
-  center: google.maps.LatLngLiteral;
-  options: google.maps.MapOptions = {
+  mapZoom = 16;
+  mapCenter: google.maps.LatLngLiteral;
+  mapOptions: google.maps.MapOptions = {
     mapTypeId: 'roadmap',
     scrollwheel: false,
     disableDoubleClickZoom: true,
     maxZoom: 18,
     minZoom: 8,
   }
+  segmentOptions: google.maps.PolylineOptions;
 
   constructor(private transloc: TranslocService) { }
-
-  // TODO: create local caching startup sequence
 
   ngOnInit() {
     // set default parameters
@@ -80,9 +79,6 @@ export class MapComponent implements OnInit {
     this.isLoading = true;
     this.prefetchMapData(this.currentRoute);
   }
-
-  // TODO: assign buttons to route setting methods
-  // TODO: add color assignments to routes
   // TODO: add error handling to transloc data retrievals
   // TODO: add error handling to map component
   // TODO: look up algorithms to smoothen location transition / get rid of backlog
@@ -92,6 +88,13 @@ export class MapComponent implements OnInit {
       this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     else
       this.bottomPanelHeight = this.EXPANDED_BOTTOM_PANEL_HEIGHT;
+  }
+
+  setSegmentOptions(routeId: number) {
+    const routeColor: string = this.allRoutes.filter(route => route.route_id == routeId.toString())[0].color;
+    this.segmentOptions = {
+      strokeColor: ('#'+routeColor)
+    }
   }
 
   updateMarkers(routeId: number): void {
@@ -130,13 +133,14 @@ export class MapComponent implements OnInit {
     // reset bus variables
     this.displayBusIds = [];
     this.busMap.clear();
+    this.setSegmentOptions(newRoute);
     this.currentRoute = newRoute;
   }
 
   initMap(routeId: number) {
     this.isLoading = true;
     navigator.geolocation.getCurrentPosition((position) => {
-      this.center = {
+      this.mapCenter = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
@@ -167,7 +171,8 @@ export class MapComponent implements OnInit {
       this.updateMarkers(routeId);
       this.updateRoutes(routeId);
       this.startBusTimer(routeId);
-
+      this.setSegmentOptions(routeId);
+      
       this.transloc.currentRouteNumber.subscribe(newCurrentRoute => {
         this.changeRoute(newCurrentRoute);
       });

@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
     this.currentRouteName = "";
     this.translocService.currentRouteName.subscribe(currentRouteName => {
       this.currentRouteName = currentRouteName;
-      console.log(this.currentRouteName);
     });
   }
 }
