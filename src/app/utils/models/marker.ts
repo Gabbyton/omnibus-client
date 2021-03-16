@@ -33,10 +33,6 @@ export class Marker implements MarkerInterface {
         lat: this.position[0],
         lng: this.position[1],
       },
-      label: {
-        color: this.labelColor,
-        text: {},
-      },
       title: this.title,
       options: {
         icon: {

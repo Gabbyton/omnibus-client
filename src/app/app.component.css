@@ -13,6 +13,7 @@
     width: 80vw;
     padding-top: 10vh;
     padding-bottom: 10vh;
+    z-index: 100;
 }
 
 .botbar {

@@ -33,8 +33,12 @@ export class MapComponent implements OnInit {
 
   currentRoute: number;
 
-
   // ui fields
+  prefetchLoading: boolean;
+  busTimerLoading: boolean;
+  mapLoading: boolean;
+  onInitLoading: boolean;
+
   bottomPanelHeight: number;
   DEFAULT_BOTTOM_PANEL_HEIGHT: number;
   EXPANDED_BOTTOM_PANEL_HEIGHT: number;
@@ -50,18 +54,18 @@ export class MapComponent implements OnInit {
     disableDoubleClickZoom: true,
     maxZoom: 18,
     minZoom: 8,
+    // gestureHandling: "cooperative" // TODO: add once testing on actual devices
   }
   segmentOptions: google.maps.PolylineOptions;
 
   constructor(private transloc: TranslocService) { }
 
   ngOnInit() {
+    this.onInitLoading = true;
     // set default parameters
     this.DEFAULT_BOTTOM_PANEL_HEIGHT = 25;
     this.EXPANDED_BOTTOM_PANEL_HEIGHT = 50;
 
-    // initialize dynamic variables
-    this.isLoading = false;
     // TODO: switch to one array for display markers
     this.displayMarkers = [];
     this.drawSegmentSet = [];
@@ -76,8 +80,8 @@ export class MapComponent implements OnInit {
     this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
     this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     this.currentRoute = 8004946;
-    this.isLoading = true;
     this.prefetchMapData(this.currentRoute);
+    this.onInitLoading = false;
   }
   // TODO: add error handling to transloc data retrievals
   // TODO: add error handling to map component
@@ -93,7 +97,7 @@ export class MapComponent implements OnInit {
   setSegmentOptions(routeId: number) {
     const routeColor: string = this.allRoutes.filter(route => route.route_id == routeId.toString())[0].color;
     this.segmentOptions = {
-      strokeColor: ('#'+routeColor)
+      strokeColor: ('#' + routeColor)
     }
   }
 
@@ -138,6 +142,7 @@ export class MapComponent implements OnInit {
   }
 
   initMap(routeId: number) {
+    this.mapLoading = true;
     this.isLoading = true;
     navigator.geolocation.getCurrentPosition((position) => {
       this.mapCenter = {
@@ -146,10 +151,11 @@ export class MapComponent implements OnInit {
       }
       this.isLoading = false;
     });
+    this.mapLoading = false;
   }
 
   prefetchMapData(routeId: number) {
-    this.isLoading = true;
+    this.prefetchLoading = true;
     const prefetch = of(3);
     prefetch.pipe(
       concatMap(_ => this.transloc.getRoutes()),
@@ -172,21 +178,23 @@ export class MapComponent implements OnInit {
       this.updateRoutes(routeId);
       this.startBusTimer(routeId);
       this.setSegmentOptions(routeId);
-      
+
       this.transloc.currentRouteNumber.subscribe(newCurrentRoute => {
         this.changeRoute(newCurrentRoute);
       });
       this.initMap(routeId);
+      this.prefetchLoading = false;
     });
   }
 
   startBusTimer(routeId: number): void {
+    this.busTimerLoading = true;
     this.busTimerSubs = this.getCurrentBusPositions(routeId).subscribe(allVehicleData => {
       this.allVehicles.next(allVehicleData);
       this.allVehicles.subscribe(vehicles => {
         this.updateBuses(vehicles)
       });
-      this.isLoading = false; // TODO: find a better place for this
+      this.busTimerLoading = false;
     });
   }
 
