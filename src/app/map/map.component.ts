@@ -77,6 +77,7 @@ export class MapComponent implements OnInit {
     this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
     this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     this.currentRoute = 8004946;
+    this.isLoading = true;
     this.prefetchMapData(this.currentRoute);
   }
 
@@ -120,11 +121,16 @@ export class MapComponent implements OnInit {
   }
 
   changeRoute(newRoute: number): void {
+    // TODO: change the zoom and center level to see all of
+    // FIXME: alert component to show loading while any process is executing
     console.log(`route will change to: ${newRoute}`);
     this.updateMarkers(newRoute);
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
     this.startBusTimer(newRoute);
+    // reset bus variables
+    this.displayBusIds = [];
+    this.busMap.clear();
     this.currentRoute = newRoute;
   }
 
@@ -135,6 +141,7 @@ export class MapComponent implements OnInit {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       }
+      this.isLoading = false;
     });
   }
 
