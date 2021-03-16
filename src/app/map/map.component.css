@@ -38,3 +38,12 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+.loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    text-align: center;
+}

@@ -15,6 +15,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import {MatRippleModule} from '@angular/material/core';
 import { MatChipsModule } from "@angular/material/chips";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { RouteSelectComponent } from './sidenav/route-select/route-select.component';
 
@@ -37,7 +38,8 @@ import { RouteSelectComponent } from './sidenav/route-select/route-select.compon
     MatCardModule,
     MatSidenavModule,
     MatRippleModule,
-    MatChipsModule
+    MatChipsModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
