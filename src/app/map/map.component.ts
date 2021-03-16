@@ -3,7 +3,7 @@ import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
 import { BehaviorSubject, forkJoin, Observable, of, Subscription, timer } from "rxjs";
-import { concatMap, take } from "rxjs/operators";
+import { concatMap, take, tap } from "rxjs/operators";
 import { Marker } from '../utils/models/marker';
 import { Stop } from '../utils/models/stop';
 import { Route } from '../utils/models/route';
@@ -144,6 +144,10 @@ export class MapComponent implements OnInit {
     const prefetch = of(3);
     prefetch.pipe(
       concatMap(_ => this.transloc.getRoutes()),
+      tap(allRoutes => {
+        console.log(allRoutes);
+        this.transloc.setGlobalRoutes(allRoutes)
+      }),
       concatMap(allRoutes => {
         return forkJoin({
           stops: this.transloc.getStops(),

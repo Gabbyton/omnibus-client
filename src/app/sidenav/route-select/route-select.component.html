@@ -1,6 +1,15 @@
 <div class="container">
-    <div class="route-select-box" matRipple [matRippleDisabled]="false">
-        <p class="mat-h3 route-title">Greenlink</p>
-        <p class="mat-small">Case Western Reserve University</p>
+    <div class="routes-container" *ngIf="displayRoutes.length != 0; else noRoutes">
+        <div *ngFor="let route of displayRoutes; index as i" class="route-select-box" matRipple
+            [matRippleDisabled]="false" [style]="'color: #'+route.color+'; border-color: #'+route.color+';'">
+            <p class="mat-h3 route-title">{{route.short_name}}</p>
+            <p class="mat-small">Case Western Reserve University</p>
+        </div>
     </div>
 </div>
+
+<ng-template #noRoutes>
+    <div class="no-route-error">
+        <p class="mat-small">No Routes to display!</p>
+    </div>
+</ng-template>

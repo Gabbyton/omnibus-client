@@ -12,6 +12,12 @@
 }
 
 .route-title {
-    color: green;
     margin-bottom: 0;
+}
+
+.no-route-error {
+    height: 100%;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
 }

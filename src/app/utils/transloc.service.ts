@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map, filter, tap } from 'rxjs/operators';
 import { Route } from './models/route';
 import { Stop } from './models/stop';
@@ -13,7 +13,17 @@ export class TranslocService {
 
   SERVER_URL = 'http://localhost:5003';
 
+  allRoutes: BehaviorSubject<Route[]> = new BehaviorSubject([]);
+
   constructor(private http: HttpClient) { }
+
+  get globalRoutes(): BehaviorSubject<Route[]> {
+    return this.allRoutes;
+  }
+
+  setGlobalRoutes(allNewRoutes: Route[]): void {
+    this.allRoutes.next(allNewRoutes);
+  }
 
   getRoutes() {
     return this.http.get<Route[]>(`${this.SERVER_URL}/get-routes`, {
