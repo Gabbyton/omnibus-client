@@ -22,21 +22,5 @@
       <mat-icon>{{bottomPanelHeight != DEFAULT_BOTTOM_PANEL_HEIGHT ? 'arrow_drop_down':'arrow_drop_up'}}</mat-icon>
     </button>
   </div>
-  <div class="info-panel">
-    <div class="col">
-      <img src="assets/bus-icon.svg" alt="Bus Icon" style="height: 32px;">
-    </div>
-    <div class="col left">
-      <p>
-        <b>Scheduled</b><br>
-        6:20 PM
-      </p>
-    </div>
-    <div class="col right">
-      <p>
-        <b>ETA</b><br>
-        7 min
-      </p>
-    </div>
-  </div>
+  <app-schedule-drawer></app-schedule-drawer>
 </div>
