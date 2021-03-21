@@ -8,7 +8,7 @@ import { Vehicle } from './models/vehicle';
 })
 export class LiveLocationService {
 
-  SERVER_URL: string = "https://feeds.transloc.com/3/vehicle_statuses";
+  SERVER_URL: string = `http://localhost:5003`;
 
   constructor(private http: HttpClient) { }
 
@@ -18,8 +18,8 @@ export class LiveLocationService {
         'Content-Type': 'application/json'
       }
     }).pipe(
-      map((rawData: any) => rawData.vehicles),
-      map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == routeId)),
+      map((rawData: any) => !!rawData.vehicles ? rawData.vehicles : []),
+      map((busArray: Vehicle[]) => busArray.length > 0 ? busArray.filter(bus => bus.route_id == routeId) : [])
     );
   }
 }
