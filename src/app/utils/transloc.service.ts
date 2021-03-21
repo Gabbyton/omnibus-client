@@ -72,14 +72,4 @@ export class TranslocService {
         return segmentMap;
       }));
   }
-
-  getArrivalData(routeId: number) {
-    return this.http.get<Vehicle[]>(`${this.SERVER_URL}/get-arrivals`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).pipe(
-      map((busArray: Vehicle[]) => busArray.filter(bus => bus.route_id == routeId)),
-    );
-  }
 }

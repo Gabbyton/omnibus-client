@@ -8,6 +8,7 @@ import { Marker } from '../utils/models/marker';
 import { Stop } from '../utils/models/stop';
 import { Route } from '../utils/models/route';
 import { Vehicle } from '../utils/models/vehicle';
+import { LiveLocationService } from '../utils/live-location.service';
 
 @Component({
   selector: 'app-map',
@@ -58,7 +59,7 @@ export class MapComponent implements OnInit {
   }
   segmentOptions: google.maps.PolylineOptions;
 
-  constructor(private transloc: TranslocService) { }
+  constructor(private transloc: TranslocService, private liveLocation: LiveLocationService) { }
 
   ngOnInit() {
     this.onInitLoading = true;
@@ -129,7 +130,6 @@ export class MapComponent implements OnInit {
 
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of
-    // FIXME: alert component to show loading while any process is executing
     this.updateMarkers(newRoute);
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
@@ -200,7 +200,7 @@ export class MapComponent implements OnInit {
 
   getCurrentBusPositions(routeId: number): Observable<any> {
     return timer(0, 500).pipe(
-      concatMap(_ => this.transloc.getArrivalData(routeId).pipe(take(1))),
+      concatMap(_ => this.liveLocation.getArrivalData(routeId).pipe(take(1))),
     );
   }
   // TODO: add angular animations to expand button
