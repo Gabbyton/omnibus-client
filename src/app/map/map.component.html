@@ -15,12 +15,3 @@
     </div>
   </div>
 </ng-template>
-
-<div class="bottom-panel" [ngStyle]="{'height.vh': bottomPanelHeight}">
-  <div class="expand-button">
-    <button mat-icon-button (click)="expandBottomPanel()">
-      <mat-icon>{{bottomPanelHeight != DEFAULT_BOTTOM_PANEL_HEIGHT ? 'arrow_drop_down':'arrow_drop_up'}}</mat-icon>
-    </button>
-  </div>
-  <app-schedule-drawer></app-schedule-drawer>
-</div>

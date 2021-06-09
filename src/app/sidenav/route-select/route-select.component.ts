@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Route } from 'src/app/utils/models/route';
+import { Route } from 'src/app/utils/data/models/route';
 import { TranslocService } from 'src/app/utils/transloc.service';
 import { UiService } from 'src/app/utils/ui.service';
 

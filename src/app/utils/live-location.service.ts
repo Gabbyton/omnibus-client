@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Vehicle } from './models/vehicle';
+import { map, tap } from 'rxjs/operators';
+import { Vehicle } from './data/models/vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,6 @@ export class LiveLocationService {
         'Content-Type': 'application/json'
       }
     }).pipe(
-      map((rawData: any) => !!rawData.vehicles ? rawData.vehicles : []),
       map((busArray: Vehicle[]) => busArray.length > 0 ? busArray.filter(bus => bus.route_id == routeId) : [])
     );
   }

@@ -4,11 +4,12 @@ import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
 import { BehaviorSubject, forkJoin, Observable, of, Subscription, timer } from "rxjs";
 import { concatMap, take, tap } from "rxjs/operators";
-import { Marker } from '../utils/models/marker';
-import { Stop } from '../utils/models/stop';
-import { Route } from '../utils/models/route';
-import { Vehicle } from '../utils/models/vehicle';
+import { Stop } from '../utils/data/models/stop.model';
+import { Route } from '../utils/data/models/route';
 import { LiveLocationService } from '../utils/live-location.service';
+import { StopMarker } from '../utils/data/models/stop-marker.model';
+import { VehicleMarker } from '../utils/data/models/vehicle-marker.model';
+import { Vehicle } from '../utils/data/models/vehicle';
 
 @Component({
   selector: 'app-map',
@@ -19,7 +20,7 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
   // fields containing map data
-  allStops: Stop[];
+  private allStops: Stop[];
   allRoutes: Route[];
   allSegments: Map<number, any[]>;
   allVehicles: BehaviorSubject<Vehicle[]>;
@@ -63,9 +64,6 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     this.onInitLoading = true;
-    // set default parameters
-    this.DEFAULT_BOTTOM_PANEL_HEIGHT = 25;
-    this.EXPANDED_BOTTOM_PANEL_HEIGHT = 50;
 
     // TODO: switch to one array for display markers
     this.displayMarkers = [];
@@ -77,7 +75,6 @@ export class MapComponent implements OnInit {
     // initialize variables containing all data
     this.allRoutes = [];
     this.allSegments = new Map();
-    this.allStops = [];
     this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
     this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     this.currentRoute = 8004946;
@@ -87,13 +84,6 @@ export class MapComponent implements OnInit {
   // TODO: add error handling to transloc data retrievals
   // TODO: add error handling to map component
   // TODO: look up algorithms to smoothen location transition / get rid of backlog
-
-  expandBottomPanel(): void {
-    if (this.bottomPanelHeight != this.DEFAULT_BOTTOM_PANEL_HEIGHT)
-      this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
-    else
-      this.bottomPanelHeight = this.EXPANDED_BOTTOM_PANEL_HEIGHT;
-  }
 
   setSegmentOptions(routeId: number) {
     const routeColor: string = this.allRoutes.filter(route => route.route_id == routeId.toString())[0].color;
@@ -106,7 +96,7 @@ export class MapComponent implements OnInit {
     this.displayMarkers = [];
     const finalStops = this.allStops.filter(stop => stop.routes.indexOf(routeId.toString()) > -1);
     for (let stop of finalStops) {
-      this.displayMarkers.push(new Marker(stop.location, 'red', stop.name, stop.name).getMarkerMapsObject());
+      this.displayMarkers.push(new StopMarker(stop.location, stop.name).toJSON());
     }
   }
 
@@ -117,7 +107,7 @@ export class MapComponent implements OnInit {
   updateBuses(vehicles: Vehicle[]): void {
     vehicles.forEach(bus => {
       if (this.busMap.get(bus.id) == undefined) {
-        const newDisplayBus = new Marker(bus.position, 'red', bus.call_name, bus.call_name, '', bus.id, 'vehicle').getMarkerMapsObject();
+        const newDisplayBus = new VehicleMarker(bus.position, bus.call_name, bus.id).toJSON();
         this.displayBusIds.push(bus.id);
         this.busMap.set(bus.id, newDisplayBus);
       }
@@ -144,10 +134,10 @@ export class MapComponent implements OnInit {
   initMap(routeId: number) {
     this.mapLoading = true;
     this.isLoading = true;
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.getCurrentPosition((position) => { // set the map with case western as center
       this.mapCenter = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
+        lat: 41.504324915824725,
+        lng: -81.60848998642432,
       }
       this.isLoading = false;
     });
@@ -160,7 +150,7 @@ export class MapComponent implements OnInit {
     prefetch.pipe(
       concatMap(_ => this.transloc.getRoutes()),
       tap(allRoutes => {
-        this.transloc.setGlobalRoutes(allRoutes)
+        this.transloc.setGlobalRoutes(allRoutes) // for ui only
       }),
       concatMap(allRoutes => {
         return forkJoin({
@@ -171,7 +161,7 @@ export class MapComponent implements OnInit {
       })
     ).subscribe(prefetchedData => {
       this.allRoutes = prefetchedData.routes;
-      this.allStops = prefetchedData.stops; // TODO: save all stops to a hashmap
+      this.allStops = prefetchedData.stops;
       this.allSegments = prefetchedData.segments;
 
       this.updateMarkers(routeId);
@@ -190,6 +180,7 @@ export class MapComponent implements OnInit {
   startBusTimer(routeId: number): void {
     this.busTimerLoading = true;
     this.busTimerSubs = this.getCurrentBusPositions(routeId).subscribe(allVehicleData => {
+
       this.allVehicles.next(allVehicleData);
       this.allVehicles.subscribe(vehicles => {
         this.updateBuses(vehicles)
@@ -203,5 +194,4 @@ export class MapComponent implements OnInit {
       concatMap(_ => this.liveLocation.getArrivalData(routeId).pipe(take(1))),
     );
   }
-  // TODO: add angular animations to expand button
 }

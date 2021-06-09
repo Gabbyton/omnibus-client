@@ -2,9 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map, filter, tap } from 'rxjs/operators';
-import { Route } from './models/route';
-import { Stop } from './models/stop';
-import { Vehicle } from './models/vehicle';
+import { Route } from './data/models/route';
+import { Stop } from './data/models/stop.model';
 
 @Injectable({
   providedIn: 'root'

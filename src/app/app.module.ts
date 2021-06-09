@@ -13,12 +13,11 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import {MatRippleModule} from '@angular/material/core';
+import { MatRippleModule } from '@angular/material/core';
 import { MatChipsModule } from "@angular/material/chips";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { RouteSelectComponent } from './sidenav/route-select/route-select.component';
-import { ScheduleDrawerComponent } from './schedule-drawer/schedule-drawer.component';
 
 
 @NgModule({
@@ -26,7 +25,6 @@ import { ScheduleDrawerComponent } from './schedule-drawer/schedule-drawer.compo
     AppComponent,
     MapComponent,
     RouteSelectComponent,
-    ScheduleDrawerComponent
   ],
   imports: [
     BrowserModule,
