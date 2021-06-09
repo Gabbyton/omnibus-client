@@ -11,6 +11,7 @@ import { StopMarker } from '../utils/data/models/stop-marker.model';
 import { VehicleMarker } from '../utils/data/models/vehicle-marker.model';
 import { Vehicle } from '../utils/data/models/vehicle';
 import { StopService } from '../utils/data/services/stop.service';
+import { BusService } from '../utils/data/services/bus.service';
 
 @Component({
   selector: 'app-map',
@@ -21,17 +22,15 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
   // fields containing map data
-  // private allStops: Stop[];
-  allRoutes: Route[];
-  allSegments: Map<number, any[]>;
-  allVehicles: BehaviorSubject<Vehicle[]>;
+  allRoutes: Route[] = [];
+  allSegments: Map<number, any[]> = new Map();
+  allVehicles: BehaviorSubject<Vehicle[]> = new BehaviorSubject([]);
 
   // field for rendering
-  displayMarkers: any[];
-  drawSegmentSet: any[];
+  displayMarkers: any[] = [];
+  displayVehicles: any[] = [];
+  drawSegmentSet: any[] = [];
 
-  displayBusIds: number[];
-  busMap: Map<number, any>;
   busTimerSubs: Subscription;
 
   currentRoute: number;
@@ -41,10 +40,6 @@ export class MapComponent implements OnInit {
   busTimerLoading: boolean;
   mapLoading: boolean;
   onInitLoading: boolean;
-
-  bottomPanelHeight: number;
-  DEFAULT_BOTTOM_PANEL_HEIGHT: number;
-  EXPANDED_BOTTOM_PANEL_HEIGHT: number;
 
   isLoading: boolean;
 
@@ -63,28 +58,13 @@ export class MapComponent implements OnInit {
 
   constructor(
     private transloc: TranslocService,
-    private liveLocation: LiveLocationService,
     private stopService: StopService,
+    private busService: BusService,
   ) { }
 
   ngOnInit() {
-    this.onInitLoading = true;
-
-    // TODO: switch to one array for display markers
-    this.displayMarkers = [];
-    this.drawSegmentSet = [];
-
-    this.displayBusIds = [];
-    this.busMap = new Map();
-
-    // initialize variables containing all data
-    this.allRoutes = [];
-    this.allSegments = new Map();
-    this.allVehicles = new BehaviorSubject([]); // TODO: set an initial value to avoid first error
-    this.bottomPanelHeight = this.DEFAULT_BOTTOM_PANEL_HEIGHT;
     this.currentRoute = 8004946;
     this.prefetchMapData(this.currentRoute);
-    this.onInitLoading = false;
   }
   // TODO: add error handling to transloc data retrievals
   // TODO: add error handling to map component
@@ -97,30 +77,8 @@ export class MapComponent implements OnInit {
     }
   }
 
-  // updateMarkers(routeId: number): void {
-  //   this.displayMarkers = [];
-  //   const finalStops = this.allStops.filter(stop => stop.routes.indexOf(routeId.toString()) > -1);
-  //   for (let stop of finalStops) {
-  //     this.displayMarkers.push(new StopMarker(stop.location, stop.name).toJSON());
-  //   }
-  // }
-
   updateRoutes(routeId: number): void {
     this.drawSegmentSet = this.allSegments.get(routeId);
-  }
-
-  updateBuses(vehicles: Vehicle[]): void {
-    vehicles.forEach(bus => {
-      if (this.busMap.get(bus.id) == undefined) {
-        const newDisplayBus = new VehicleMarker(bus.position, bus.call_name, bus.id).toJSON();
-        this.displayBusIds.push(bus.id);
-        this.busMap.set(bus.id, newDisplayBus);
-      }
-      else {
-        const replaceBus = this.busMap.get(bus.id);
-        replaceBus.position = new google.maps.LatLng(bus.position[0], bus.position[1]);
-      }
-    });
   }
 
   changeRoute(newRoute: number): void {
@@ -132,9 +90,6 @@ export class MapComponent implements OnInit {
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
     this.startBusTimer(newRoute);
-    // reset bus variables
-    this.displayBusIds = [];
-    this.busMap.clear();
     this.setSegmentOptions(newRoute);
     this.currentRoute = newRoute;
   }
@@ -162,18 +117,18 @@ export class MapComponent implements OnInit {
       }),
       concatMap(allRoutes => {
         return forkJoin({
+          isStopLoadingComplete: this.stopService.prefetch(),
           routes: this.transloc.getRoutes(), // TODO: pass the retrieved route array instead
-          segments: this.transloc.getSegmentsForAllRoutes(allRoutes)
+          segments: this.transloc.getSegmentsForAllRoutes(allRoutes),
         })
       })
     ).subscribe(prefetchedData => {
       this.allRoutes = prefetchedData.routes;
       this.allSegments = prefetchedData.segments;
-
-      // this.updateMarkers(routeId);
       this.displayMarkers = this.stopService.getStopsToDisplay(routeId);
-      this.updateRoutes(routeId);
       this.startBusTimer(routeId);
+
+      this.updateRoutes(routeId);
       this.setSegmentOptions(routeId);
 
       this.transloc.currentRouteNumber.subscribe(newCurrentRoute => {
@@ -186,19 +141,11 @@ export class MapComponent implements OnInit {
 
   startBusTimer(routeId: number): void {
     this.busTimerLoading = true;
-    this.busTimerSubs = this.getCurrentBusPositions(routeId).subscribe(allVehicleData => {
-
-      this.allVehicles.next(allVehicleData);
-      this.allVehicles.subscribe(vehicles => {
-        this.updateBuses(vehicles)
-      });
+    this.busTimerSubs = timer(0, 500).pipe(
+      concatMap(_ => this.busService.getBusesToDisplay(routeId)),
+    ).subscribe(busesToDisplay => {
+      this.displayVehicles = busesToDisplay;
       this.busTimerLoading = false;
     });
-  }
-
-  getCurrentBusPositions(routeId: number): Observable<any> {
-    return timer(0, 500).pipe(
-      concatMap(_ => this.liveLocation.getArrivalData(routeId).pipe(take(1))),
-    );
   }
 }
