@@ -10,6 +10,7 @@ import { LiveLocationService } from '../utils/live-location.service';
 import { StopMarker } from '../utils/data/models/stop-marker.model';
 import { VehicleMarker } from '../utils/data/models/vehicle-marker.model';
 import { Vehicle } from '../utils/data/models/vehicle';
+import { StopService } from '../utils/data/services/stop.service';
 
 @Component({
   selector: 'app-map',
@@ -20,7 +21,7 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
   // fields containing map data
-  private allStops: Stop[];
+  // private allStops: Stop[];
   allRoutes: Route[];
   allSegments: Map<number, any[]>;
   allVehicles: BehaviorSubject<Vehicle[]>;
@@ -60,7 +61,11 @@ export class MapComponent implements OnInit {
   }
   segmentOptions: google.maps.PolylineOptions;
 
-  constructor(private transloc: TranslocService, private liveLocation: LiveLocationService) { }
+  constructor(
+    private transloc: TranslocService,
+    private liveLocation: LiveLocationService,
+    private stopService: StopService,
+  ) { }
 
   ngOnInit() {
     this.onInitLoading = true;
@@ -92,13 +97,13 @@ export class MapComponent implements OnInit {
     }
   }
 
-  updateMarkers(routeId: number): void {
-    this.displayMarkers = [];
-    const finalStops = this.allStops.filter(stop => stop.routes.indexOf(routeId.toString()) > -1);
-    for (let stop of finalStops) {
-      this.displayMarkers.push(new StopMarker(stop.location, stop.name).toJSON());
-    }
-  }
+  // updateMarkers(routeId: number): void {
+  //   this.displayMarkers = [];
+  //   const finalStops = this.allStops.filter(stop => stop.routes.indexOf(routeId.toString()) > -1);
+  //   for (let stop of finalStops) {
+  //     this.displayMarkers.push(new StopMarker(stop.location, stop.name).toJSON());
+  //   }
+  // }
 
   updateRoutes(routeId: number): void {
     this.drawSegmentSet = this.allSegments.get(routeId);
@@ -120,7 +125,10 @@ export class MapComponent implements OnInit {
 
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of
-    this.updateMarkers(newRoute);
+
+    // TODO: place new service functions here
+    this.displayMarkers = this.stopService.getStopsToDisplay(newRoute);
+
     this.updateRoutes(newRoute);
     this.busTimerSubs.unsubscribe();
     this.startBusTimer(newRoute);
@@ -154,17 +162,16 @@ export class MapComponent implements OnInit {
       }),
       concatMap(allRoutes => {
         return forkJoin({
-          stops: this.transloc.getStops(),
           routes: this.transloc.getRoutes(), // TODO: pass the retrieved route array instead
           segments: this.transloc.getSegmentsForAllRoutes(allRoutes)
         })
       })
     ).subscribe(prefetchedData => {
       this.allRoutes = prefetchedData.routes;
-      this.allStops = prefetchedData.stops;
       this.allSegments = prefetchedData.segments;
 
-      this.updateMarkers(routeId);
+      // this.updateMarkers(routeId);
+      this.displayMarkers = this.stopService.getStopsToDisplay(routeId);
       this.updateRoutes(routeId);
       this.startBusTimer(routeId);
       this.setSegmentOptions(routeId);
