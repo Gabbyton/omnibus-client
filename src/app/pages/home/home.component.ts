@@ -1,5 +1,6 @@
 import { AfterViewChecked, Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav/drawer';
+import { DrawerService } from 'src/app/utils/ui-services/drawer.service';
 import { SplashService } from 'src/app/utils/ui-services/splash.service';
 import { UiService } from 'src/app/utils/ui-services/ui.service';
 
@@ -13,13 +14,13 @@ export class HomeComponent implements OnInit {
   currentRouteName: string;
 
   constructor(
-    private uiService: UiService,
+    private drawerService: DrawerService,
     private splashService: SplashService,
   ) { }
 
   ngOnInit(): void {
     this.splashService.hide();
-    this.uiService.toggleDrawerEmitter.subscribe(_ => {
+    this.drawerService.toggleDrawerEmitter.subscribe(_ => {
       this.drawer.toggle();
     })
   }

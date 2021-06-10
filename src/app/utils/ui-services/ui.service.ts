@@ -10,8 +10,6 @@ import { StopService } from '../data/model-services/stop.service';
 })
 export class UiService {
 
-  toggleDrawerEmitter: EventEmitter<void> = new EventEmitter();
-
   constructor(
     private routeService: RouteService,
     private stopService: StopService,
@@ -24,9 +22,5 @@ export class UiService {
       concatMap(_ => this.segmentService.prefetch(this.routeService.getAllRoutes())),
       concatMap(_ => of(null)),
     );
-  }
-
-  toggleDrawer(): void {
-    this.toggleDrawerEmitter.emit();
   }
 }
