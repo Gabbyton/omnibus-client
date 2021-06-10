@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { MapComponent } from './components/map/map.component';
 import { HomeComponent } from './pages/home/home.component';
+import { SplashComponent } from './pages/splash/splash.component';
 import { PreloadGuard } from './utils/guards/preload.guard';
 
 const routes: Routes = [

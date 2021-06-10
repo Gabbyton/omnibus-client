@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { RouteSelectComponent } from './components/route-select/route-select.component';
 import { HomeComponent } from './pages/home/home.component';
+import { SplashComponent } from './pages/splash/splash.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { HomeComponent } from './pages/home/home.component';
     MapComponent,
     RouteSelectComponent,
     HomeComponent,
+    SplashComponent,
   ],
   imports: [
     BrowserModule,
