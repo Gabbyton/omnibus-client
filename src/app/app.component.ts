@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
-import { TranslocService } from './utils/data/web-services/transloc.service';
 import { UiService } from './utils/ui-services/ui.service';
 
 @Component({
@@ -13,13 +12,9 @@ export class AppComponent implements OnInit {
   title = 'transloc-app-wrapper';
   currentRouteName: string;
 
-  constructor(private translocService: TranslocService, private uiService: UiService) { }
+  constructor(private uiService: UiService) { }
 
   ngOnInit(): void {
-    // this.currentRouteName = "";
-    // this.translocService.currentRouteName.subscribe(currentRouteName => {
-    //   this.currentRouteName = currentRouteName;
-    // });
     this.uiService.toggleDrawerEmitter.subscribe(_ => {
       this.drawer.toggle();
     })
