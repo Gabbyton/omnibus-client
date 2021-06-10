@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
-import { LiveLocationService } from "../web-services/live-location.service";
 import { Vehicle } from "../models/vehicle";
 import { VehicleMarker } from "../models/vehicle-marker.model";
+import { TranslocService } from "../web-services/transloc.service";
 
 @Injectable({
     providedIn: 'root',
@@ -12,10 +12,10 @@ export class BusService {
     private vehicles: Vehicle[];
     private persistentVehicleData: Map<number, any> = new Map();
 
-    constructor(private livelocation: LiveLocationService) { }
+    constructor(private transloc: TranslocService) { }
 
     private getCurrentBusPositions(routeId: number): Observable<Vehicle[]> {
-        return this.livelocation.getArrivalData(routeId).pipe(
+        return this.transloc.getArrivalData(routeId).pipe(
             first(),
             catchError(_ => []),
             tap(data => { this.vehicles = data }),

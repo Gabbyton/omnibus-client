@@ -4,40 +4,36 @@ import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Route } from '../models/route.model';
 import { Stop } from '../models/stop.model';
+import { Vehicle } from '../models/vehicle';
+
+const SERVER_URL = 'http://localhost:5003';
+const dataRetrievalHeaders = {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class TranslocService {
 
-  SERVER_URL = 'http://localhost:5003';
-
   constructor(private http: HttpClient) { }
 
-  getRoutes() {
-    return this.http.get<Route[]>(`${this.SERVER_URL}/get-routes`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+  getRoutes(): Observable<Route[]> {
+    return this.http.get<Route[]>(`${SERVER_URL}/get-routes`, dataRetrievalHeaders);
   }
 
-  getStops() {
-    return this.http.get<Stop[]>(`${this.SERVER_URL}/get-stops`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+  getStops(): Observable<Stop[]> {
+    return this.http.get<Stop[]>(`${SERVER_URL}/get-stops`, dataRetrievalHeaders);
   }
 
-  getSegmentsForRoute(routeId: string): Observable<any> {
-    return this.http.get(`${this.SERVER_URL}/get-segment?route=${routeId}`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).pipe(
-      map(rawSegmentData => Object.keys(rawSegmentData).map(k => rawSegmentData[k])),
-      map((allSegments: string[]) => allSegments.map(encSegment => google.maps.geometry.encoding.decodePath(encSegment)))
+  private getSegmentsForRoute(routeId: string): Observable<any> {
+    return this.http.get(`${SERVER_URL}/get-segment?route=${routeId}`, dataRetrievalHeaders).pipe(
+      map(rawSegmentData => Object.keys(rawSegmentData) // retrieve all keys of object
+        .map(k => rawSegmentData[k])), // substitute object keys with values
+      map((allSegments: string[]) => allSegments // for each value that represents a list of encoded segments defining a subsection
+        .map(encSegment => google.maps.geometry.encoding.decodePath(encSegment))), // substitute with the decoded list of segments
     );
   }
 
@@ -54,5 +50,11 @@ export class TranslocService {
         });
         return segmentMap;
       }));
+  }
+
+  getArrivalData(routeId: number) {
+    return this.http.get<Vehicle[]>(`${SERVER_URL}/get-arrivals`, dataRetrievalHeaders).pipe(
+      map(busArray => busArray.filter(bus => bus.route_id == routeId))
+    );
   }
 }
