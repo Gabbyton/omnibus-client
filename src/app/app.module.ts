@@ -18,6 +18,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { RouteSelectComponent } from './components/route-select/route-select.component';
+import { HomeComponent } from './pages/home/home.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { RouteSelectComponent } from './components/route-select/route-select.com
     AppComponent,
     MapComponent,
     RouteSelectComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
