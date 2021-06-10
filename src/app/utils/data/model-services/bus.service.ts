@@ -4,6 +4,7 @@ import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
 import { Vehicle } from "../models/vehicle";
 import { VehicleMarker } from "../models/vehicle-marker.model";
 import { TranslocService } from "../web-services/transloc.service";
+import { RouteService } from "./route.service";
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +13,10 @@ export class BusService {
     private vehicles: Vehicle[];
     private persistentVehicleData: Map<number, any> = new Map();
 
-    constructor(private transloc: TranslocService) { }
+    constructor(
+        private transloc: TranslocService,
+        private routeService: RouteService,
+    ) { }
 
     private getCurrentBusPositions(routeId: number): Observable<Vehicle[]> {
         return this.transloc.getArrivalData(routeId).pipe(
@@ -27,7 +31,7 @@ export class BusService {
             tap(_ => this.persistentVehicleData.clear()), // initially clear map of buses
             map(data => {
                 data.map(bus => {
-                    const busJSON = new VehicleMarker(bus.position, bus.call_name, bus.id)
+                    const busJSON = new VehicleMarker(bus.position, bus.call_name, this.routeService.getRouteColor(bus.route_id), bus.id)
                         .toJSON();
                     this.persistentVehicleData.set(bus.id, busJSON); // save data to a map of buses
                 });

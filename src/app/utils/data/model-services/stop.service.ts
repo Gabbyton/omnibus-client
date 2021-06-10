@@ -5,6 +5,7 @@ import { TranslocService } from '../web-services/transloc.service';
 import { StopMarker } from '../models/stop-marker.model';
 import { Stop } from '../models/stop.model';
 import { UtilsService } from './utils.service';
+import { RouteService } from './route.service';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,10 @@ import { UtilsService } from './utils.service';
 export class StopService {
     private stops: Stop[];
 
-    constructor(private transloc: TranslocService, private utils: UtilsService) { }
+    constructor(
+        private transloc: TranslocService,
+        private routeService: RouteService,
+    ) { }
 
     prefetch(): Observable<boolean> {
         return this.transloc.getStops().pipe(
@@ -25,6 +29,6 @@ export class StopService {
     getStopsToDisplay(routeId: number): any[] {
         return this.stops
             .filter(stop => stop.routes.includes(routeId.toString()))
-            .map(stop => new StopMarker(stop.location, stop.name).toJSON());
+            .map(stop => new StopMarker(stop.location, stop.name, this.routeService.getRouteColor(this.routeService.currentRouteIDValue)).toJSON());
     }
 }

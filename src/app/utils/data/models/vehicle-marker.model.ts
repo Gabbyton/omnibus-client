@@ -3,8 +3,8 @@ import { Marker } from "./marker.model";
 export class VehicleMarker extends Marker {
     id: number;
 
-    constructor(position: number[], callName: string, id: number) {
-        super(position, callName);
+    constructor(position: number[], callName: string, color: string, id: number) {
+        super(position, callName, color);
         this.id = id;
     }
 

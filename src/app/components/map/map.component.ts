@@ -33,7 +33,8 @@ export class MapComponent implements OnInit {
     disableDoubleClickZoom: true,
     maxZoom: 18,
     minZoom: 8,
-    // gestureHandling: "cooperative" // TODO: add once testing on actual devices
+    gestureHandling: "cooperative", // TODO: add once testing on actual devices
+    disableDefaultUI: true,
   }
   segmentOptions: google.maps.PolylineOptions;
 
