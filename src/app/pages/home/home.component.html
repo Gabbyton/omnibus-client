@@ -1,1 +1,38 @@
-<p>home works!</p>
+<mat-toolbar color="primary" class="topbar">
+    <button mat-button class="example-icon" aria-label="Example icon-button with share icon" (click)="drawer.toggle()">
+      <span>{{currentRouteName}}</span>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+    <span class="example-spacer"></span>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>share</mat-icon>
+    </button>
+  </mat-toolbar>
+  
+  <mat-drawer-container [hasBackdrop]="false">
+    <mat-drawer #drawer mode="over" class="route-selection">
+      <app-route-select></app-route-select>
+    </mat-drawer>
+    <mat-drawer-content>
+      <app-map></app-map>
+    </mat-drawer-content>
+  </mat-drawer-container>
+  
+  <mat-toolbar class="botbar" color="primary">
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>departure_board</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon"
+      (click)="drawer.toggle()">
+      <mat-icon>alt_route</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </mat-toolbar>

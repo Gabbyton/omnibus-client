@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MapComponent } from './components/map/map.component';
+import { HomeComponent } from './pages/home/home.component';
 import { PreloadGuard } from './utils/guards/preload.guard';
 
 const routes: Routes = [
   {
-    path: 'map', component: MapComponent, resolve: {
+    path: 'home', component: HomeComponent, resolve: {
       uiData: PreloadGuard
     },
   },
-  { path: '', redirectTo: 'map', pathMatch: 'full' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' }
 ];
 
 @NgModule({

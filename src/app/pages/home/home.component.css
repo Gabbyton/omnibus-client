@@ -1,0 +1,30 @@
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    /* place the toolbar on top all the time */
+    z-index: 100;
+}
+
+.route-selection {
+    width: 80vw;
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    z-index: 100;
+}
+
+.botbar {
+    position: fixed;
+    bottom: 0;
+    z-index: 100;
+    padding: 0;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 black;
+}
+.botbar>button {
+    margin-left: auto;
+    margin-right: auto;
+}
