@@ -17,7 +17,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatChipsModule } from "@angular/material/chips";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { RouteSelectComponent } from './sidenav/route-select/route-select.component';
+import { RouteSelectComponent } from './components/route-select/route-select.component';
 
 
 @NgModule({
