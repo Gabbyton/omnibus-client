@@ -1,6 +1,6 @@
 .fill {
     position: absolute;
-    z-index: 100;
+    z-index: 1000;
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -11,4 +11,8 @@
 
 .center-text {
     color: white;
+}
+
+.splash-img {
+    height: 25vh;
 }
