@@ -7,7 +7,7 @@
     [title]="bus.value.title" [options]="bus.value.options">
   </map-marker>
 
-  <map-polyline *ngFor="let segment of drawSegmentSet; index as i" [path]="segment" [options]="segmentOptions">
+  <map-polyline *ngFor="let segment of drawSegmentSet" [path]="segment" [options]="segmentOptions">
   </map-polyline>
 </google-map>
 
