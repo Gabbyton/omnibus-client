@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, concatMap, tap } from "rxjs/operators";
-import { TranslocService } from "../../transloc.service";
+import { TranslocService } from "../web-services/transloc.service";
 import { Route } from "../models/route.model";
 
 @Injectable({

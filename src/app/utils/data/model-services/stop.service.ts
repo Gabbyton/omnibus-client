@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, concatMap, tap } from 'rxjs/operators';
-import { TranslocService } from '../../transloc.service';
+import { TranslocService } from '../web-services/transloc.service';
 import { StopMarker } from '../models/stop-marker.model';
 import { Stop } from '../models/stop.model';
 import { UtilsService } from './utils.service';

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
-import { LiveLocationService } from "../../live-location.service";
+import { LiveLocationService } from "../web-services/live-location.service";
 import { Vehicle } from "../models/vehicle";
 import { VehicleMarker } from "../models/vehicle-marker.model";
 

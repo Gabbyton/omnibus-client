@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Route } from './data/models/route.model';
-import { Stop } from './data/models/stop.model';
+import { Route } from '../models/route.model';
+import { Stop } from '../models/stop.model';
 
 @Injectable({
   providedIn: 'root'

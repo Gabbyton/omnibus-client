@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
-import { Vehicle } from './data/models/vehicle';
+import { Vehicle } from '../models/vehicle';
 
 @Injectable({
   providedIn: 'root'
