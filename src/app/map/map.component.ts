@@ -4,9 +4,9 @@ import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
 import { forkJoin, of, Subscription, timer } from "rxjs";
 import { concatMap, tap } from "rxjs/operators";
-import { Route } from '../utils/data/models/route';
 import { StopService } from '../utils/data/services/stop.service';
 import { BusService } from '../utils/data/services/bus.service';
+import { RouteService } from '../utils/data/services/route.service';
 
 @Component({
   selector: 'app-map',
@@ -17,7 +17,6 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
   // fields containing map data
-  allRoutes: Route[] = [];
   allSegments: Map<number, any[]> = new Map();
 
   // field for rendering
@@ -54,6 +53,7 @@ export class MapComponent implements OnInit {
     private transloc: TranslocService,
     private stopService: StopService,
     private busService: BusService,
+    private routeService: RouteService,
   ) { }
 
   ngOnInit() {
@@ -64,7 +64,8 @@ export class MapComponent implements OnInit {
   // TODO: look up algorithms to smoothen location transition / get rid of backlog
 
   setSegmentOptions(routeId: number) {
-    const routeColor: string = this.allRoutes.filter(route => route.route_id == routeId.toString())[0].color;
+    var routeColor: string = this.routeService.getRoute(
+      this.routeService.currentRouteID.value).color;
     this.segmentOptions = {
       strokeColor: ('#' + routeColor)
     }
@@ -78,15 +79,14 @@ export class MapComponent implements OnInit {
     // TODO: change the zoom and center level to see all of
     // TODO: place new service functions here
     this.displayMarkers = this.stopService.getStopsToDisplay(newRoute);
-
-    this.updateRoutes(newRoute);
     this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
+    this.updateRoutes(newRoute);
     this.startBusTimer(newRoute, true);
     this.setSegmentOptions(newRoute);
     this.currentRoute = newRoute;
   }
 
-  initMap(routeId: number) {
+  initMap() {
     this.mapLoading = true;
     this.isLoading = true;
     this.mapCenter = {
@@ -101,30 +101,25 @@ export class MapComponent implements OnInit {
     this.prefetchLoading = true;
     const prefetch = of(3);
     prefetch.pipe(
-      concatMap(_ => this.transloc.getRoutes()),
-      tap(allRoutes => {
-        this.transloc.setGlobalRoutes(allRoutes) // for ui only
+      concatMap(_ => {
+        return this.routeService.prefetch();
       }),
-      concatMap(allRoutes => {
+      concatMap(_ => {
         return forkJoin({
           isStopLoadingComplete: this.stopService.prefetch(),
-          routes: this.transloc.getRoutes(), // TODO: pass the retrieved route array instead
-          segments: this.transloc.getSegmentsForAllRoutes(allRoutes),
+          segments: this.transloc.getSegmentsForAllRoutes(this.routeService.getAllRoutes()),
         })
       })
     ).subscribe(prefetchedData => {
-      this.allRoutes = prefetchedData.routes;
       this.allSegments = prefetchedData.segments;
       this.displayMarkers = this.stopService.getStopsToDisplay(routeId);
       this.startBusTimer(routeId);
-
       this.updateRoutes(routeId);
       this.setSegmentOptions(routeId);
-
-      this.transloc.currentRouteNumber.subscribe(newCurrentRoute => {
-        this.changeRoute(newCurrentRoute);
+      this.routeService.currentRouteID.subscribe(newCurrentRouteID => {
+        this.changeRoute(newCurrentRouteID);
       });
-      this.initMap(routeId);
+      this.initMap();
       this.prefetchLoading = false;
     });
   }

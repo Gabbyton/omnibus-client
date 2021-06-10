@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Route } from './data/models/route';
+import { Route } from './data/models/route.model';
 import { Stop } from './data/models/stop.model';
 
 @Injectable({
@@ -12,23 +12,7 @@ export class TranslocService {
 
   SERVER_URL = 'http://localhost:5003';
 
-  allRoutes: BehaviorSubject<Route[]> = new BehaviorSubject([]);
-  currentRouteNumber: BehaviorSubject<number> = new BehaviorSubject(8004950);
-  currentRouteName: BehaviorSubject<string> = new BehaviorSubject("Greenlink"); // TODO: set defaults here instead
-
   constructor(private http: HttpClient) { }
-
-  setGlobalRoutes(allNewRoutes: Route[]): void {
-    this.allRoutes.next(allNewRoutes);
-  }
-
-  setGlobalCurrentRouteNumber(newCurrentRouteNumber: number) {
-    this.currentRouteNumber.next(newCurrentRouteNumber);
-  }
-
-  setGlobalCurrentRouteName(newCurrentRouteName: string) {
-    this.currentRouteName.next(newCurrentRouteName);
-  }
 
   getRoutes() {
     return this.http.get<Route[]>(`${this.SERVER_URL}/get-routes`, {

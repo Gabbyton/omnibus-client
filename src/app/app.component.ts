@@ -16,10 +16,10 @@ export class AppComponent implements OnInit {
   constructor(private translocService: TranslocService, private uiService: UiService) { }
 
   ngOnInit(): void {
-    this.currentRouteName = "";
-    this.translocService.currentRouteName.subscribe(currentRouteName => {
-      this.currentRouteName = currentRouteName;
-    });
+    // this.currentRouteName = "";
+    // this.translocService.currentRouteName.subscribe(currentRouteName => {
+    //   this.currentRouteName = currentRouteName;
+    // });
     this.uiService.toggleDrawerEmitter.subscribe(_ => {
       this.drawer.toggle();
     })
