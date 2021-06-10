@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { TranslocService } from './utils/data/web-services/transloc.service';
-import { UiService } from './utils/ui.service';
+import { UiService } from './utils/ui-services/ui.service';
 
 @Component({
   selector: 'app-root',
