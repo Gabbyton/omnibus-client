@@ -25,7 +25,7 @@ export class MapComponent implements OnInit {
   isLoading: boolean = false;
 
   // map fields
-  mapZoom = 16;
+  mapZoom = 18;
   mapCenter: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     mapTypeId: 'roadmap',
