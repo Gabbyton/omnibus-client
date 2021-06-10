@@ -1,4 +1,5 @@
-<mat-toolbar color="primary" class="topbar">
+<div class="container">
+  <mat-toolbar color="primary" class="topbar">
     <button mat-button class="example-icon" aria-label="Example icon-button with share icon" (click)="drawer.toggle()">
       <span>{{currentRouteName}}</span>
       <mat-icon>expand_more</mat-icon>
@@ -11,28 +12,12 @@
       <mat-icon>share</mat-icon>
     </button>
   </mat-toolbar>
-  
+
   <mat-drawer-container [hasBackdrop]="false">
     <mat-drawer #drawer mode="over" class="route-selection">
       <app-route-select></app-route-select>
     </mat-drawer>
-    <mat-drawer-content>
+    <mat-drawer-content class="main-content">
       <app-map></app-map>
     </mat-drawer-content>
   </mat-drawer-container>
-  
-  <mat-toolbar class="botbar" color="primary">
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>departure_board</mat-icon>
-    </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon"
-      (click)="drawer.toggle()">
-      <mat-icon>alt_route</mat-icon>
-    </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>settings</mat-icon>
-    </button>
-  </mat-toolbar>
