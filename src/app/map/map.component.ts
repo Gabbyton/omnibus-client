@@ -22,7 +22,7 @@ export class MapComponent implements OnInit {
   displayVehicles: Map<number, any>;
 
   private vehicleUpdateTimerSubscription: Subscription;
-  isLoading: boolean = true;
+  isLoading: boolean = false;
 
   // map fields
   mapZoom = 16;
@@ -58,17 +58,10 @@ export class MapComponent implements OnInit {
   }
 
   prefetchMapData() {
-    this.isLoading = true;
-    this.routeService.prefetch().pipe(
-      concatMap(_ => this.stopService.prefetch()),
-      concatMap(_ => this.segmentService.prefetch(this.routeService.getAllRoutes())),
-    ).subscribe(_ => {
-      this.updateMapObjects(this.routeService.currentRouteIDValue);
-      this.initMap();
-      this.routeService.currentRouteIDSubject.subscribe(newCurrentRouteID => {
-        this.changeRoute(newCurrentRouteID);
-      });
-      this.isLoading = false;
+    this.updateMapObjects(this.routeService.currentRouteIDValue);
+    this.initMap();
+    this.routeService.currentRouteIDSubject.subscribe(newCurrentRouteID => {
+      this.changeRoute(newCurrentRouteID);
     });
   }
 
