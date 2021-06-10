@@ -6,7 +6,8 @@ import { PreloadGuard } from './utils/guards/preload.guard';
 
 const routes: Routes = [
   {
-    path: 'home', component: HomeComponent, resolve: {
+    path: 'home', component: HomeComponent,
+    resolve: {
       uiData: PreloadGuard
     },
   },
