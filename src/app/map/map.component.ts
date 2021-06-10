@@ -2,14 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { TranslocService } from '../utils/transloc.service';
-import { BehaviorSubject, forkJoin, Observable, of, Subscription, timer } from "rxjs";
-import { concatMap, take, tap } from "rxjs/operators";
-import { Stop } from '../utils/data/models/stop.model';
+import { forkJoin, of, Subscription, timer } from "rxjs";
+import { concatMap, tap } from "rxjs/operators";
 import { Route } from '../utils/data/models/route';
-import { LiveLocationService } from '../utils/live-location.service';
-import { StopMarker } from '../utils/data/models/stop-marker.model';
-import { VehicleMarker } from '../utils/data/models/vehicle-marker.model';
-import { Vehicle } from '../utils/data/models/vehicle';
 import { StopService } from '../utils/data/services/stop.service';
 import { BusService } from '../utils/data/services/bus.service';
 
@@ -24,14 +19,13 @@ export class MapComponent implements OnInit {
   // fields containing map data
   allRoutes: Route[] = [];
   allSegments: Map<number, any[]> = new Map();
-  allVehicles: BehaviorSubject<Vehicle[]> = new BehaviorSubject([]);
 
   // field for rendering
   displayMarkers: any[] = [];
-  displayVehicles: any[] = [];
+  displayVehicles: Map<number, any>;
   drawSegmentSet: any[] = [];
 
-  busTimerSubs: Subscription;
+  private vehicleUpdateTimerSubscription: Subscription;
 
   currentRoute: number;
 
@@ -63,11 +57,10 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.currentRoute = 8004946;
+    this.currentRoute = 8004948;
     this.prefetchMapData(this.currentRoute);
   }
   // TODO: add error handling to transloc data retrievals
-  // TODO: add error handling to map component
   // TODO: look up algorithms to smoothen location transition / get rid of backlog
 
   setSegmentOptions(routeId: number) {
@@ -83,13 +76,12 @@ export class MapComponent implements OnInit {
 
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of
-
     // TODO: place new service functions here
     this.displayMarkers = this.stopService.getStopsToDisplay(newRoute);
 
     this.updateRoutes(newRoute);
-    this.busTimerSubs.unsubscribe();
-    this.startBusTimer(newRoute);
+    this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
+    this.startBusTimer(newRoute, true);
     this.setSegmentOptions(newRoute);
     this.currentRoute = newRoute;
   }
@@ -97,13 +89,11 @@ export class MapComponent implements OnInit {
   initMap(routeId: number) {
     this.mapLoading = true;
     this.isLoading = true;
-    navigator.geolocation.getCurrentPosition((position) => { // set the map with case western as center
-      this.mapCenter = {
-        lat: 41.504324915824725,
-        lng: -81.60848998642432,
-      }
-      this.isLoading = false;
-    });
+    this.mapCenter = {
+      lat: 41.504324915824725,
+      lng: -81.60848998642432,
+    }
+    this.isLoading = false;
     this.mapLoading = false;
   }
 
@@ -139,10 +129,11 @@ export class MapComponent implements OnInit {
     });
   }
 
-  startBusTimer(routeId: number): void {
+  startBusTimer(routeId: number, changeRoute?: boolean): void {
     this.busTimerLoading = true;
-    this.busTimerSubs = timer(0, 500).pipe(
-      concatMap(_ => this.busService.getBusesToDisplay(routeId)),
+    this.vehicleUpdateTimerSubscription = timer(0, 500).pipe(
+      concatMap(_ => this.busService.getBusesToDisplay(routeId, changeRoute)),
+      tap(_ => { changeRoute = false }),
     ).subscribe(busesToDisplay => {
       this.displayVehicles = busesToDisplay;
       this.busTimerLoading = false;

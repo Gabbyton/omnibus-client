@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
-import { map, filter, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Route } from './data/models/route';
 import { Stop } from './data/models/stop.model';
 
@@ -13,7 +13,7 @@ export class TranslocService {
   SERVER_URL = 'http://localhost:5003';
 
   allRoutes: BehaviorSubject<Route[]> = new BehaviorSubject([]);
-  currentRouteNumber: BehaviorSubject<number> = new BehaviorSubject(8004946);
+  currentRouteNumber: BehaviorSubject<number> = new BehaviorSubject(8004950);
   currentRouteName: BehaviorSubject<string> = new BehaviorSubject("Greenlink"); // TODO: set defaults here instead
 
   constructor(private http: HttpClient) { }

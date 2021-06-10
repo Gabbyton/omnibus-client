@@ -3,8 +3,9 @@
   <map-marker *ngFor="let marker of displayMarkers" [position]="marker.position" [label]="marker.label"
     [title]="marker.title" [options]="marker.options">
   </map-marker>
-  <map-marker *ngFor="let bus of displayVehicles" [position]="bus.position" [label]="bus.label" [title]="bus.title"
-    [options]="bus.options">
+  <map-marker *ngFor="let bus of displayVehicles | keyvalue" [position]="bus.value.position"
+    [label]="bus.value.label" [title]="bus.value.title"
+    [options]="bus.value.options">
   </map-marker>
 
   <map-polyline *ngFor="let segment of drawSegmentSet; index as i" [path]="segment" [options]="segmentOptions">
