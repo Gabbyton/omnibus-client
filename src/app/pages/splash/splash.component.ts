@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SplashService } from 'src/app/utils/ui-services/splash.service';
 
 @Component({
   selector: 'app-splash',
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./splash.component.css']
 })
 export class SplashComponent implements OnInit {
-
-  constructor() { }
+  showSplash: boolean = true;
+  constructor(private splashService: SplashService) { }
 
   ngOnInit(): void {
+    this.splashService.showSplash.subscribe(showSplash => {
+      this.showSplash = showSplash;
+    });
   }
 
 }
