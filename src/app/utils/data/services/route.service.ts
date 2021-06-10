@@ -11,7 +11,7 @@ const INITIAL_ROUTE_ID = 8004946;
 })
 export class RouteService {
     private routes: Map<number, Route> = new Map();
-    currentRouteID: BehaviorSubject<number> = new BehaviorSubject(INITIAL_ROUTE_ID);
+    private currentRouteID: BehaviorSubject<number> = new BehaviorSubject(INITIAL_ROUTE_ID);
 
     constructor(private transloc: TranslocService) { }
 
@@ -27,10 +27,21 @@ export class RouteService {
         );
     }
 
+    get currentRouteIDSubject() {
+        return this.currentRouteID;
+    }
+
+    get currentRouteIDValue(): number {
+        return this.currentRouteID.value;
+    }
+
     getRoute(routeID: number): Route {
         return this.routes.get(routeID);
     }
 
+    getRouteColor(routeID: number): string {
+        return this.routes.get(routeID).color;
+    }
 
     getAllRoutes(): Route[] {
         return Array.from(this.routes.values());

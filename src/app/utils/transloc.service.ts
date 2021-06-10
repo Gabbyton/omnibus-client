@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Route } from './data/models/route.model';
 import { Stop } from './data/models/stop.model';
@@ -41,7 +41,7 @@ export class TranslocService {
     );
   }
 
-  getSegmentsForAllRoutes(allRoutes: Route[]): Observable<any> {
+  getSegmentsForAllRoutes(allRoutes: Route[]): Observable<Map<number, any[]>> {
     let segmentObservables: Observable<any>[] = [];
     allRoutes.forEach((route: Route) => {
       segmentObservables.push(this.getSegmentsForRoute(route.route_id));
