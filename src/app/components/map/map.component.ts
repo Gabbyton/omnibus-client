@@ -3,10 +3,10 @@ import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { Subscription, timer } from "rxjs";
 import { concatMap, tap } from "rxjs/operators";
-import { StopService } from '../utils/data/model-services/stop.service';
-import { BusService } from '../utils/data/model-services/bus.service';
-import { RouteService } from '../utils/data/model-services/route.service';
-import { SegmentService } from '../utils/data/model-services/segment.service';
+import { StopService } from '../../utils/data/model-services/stop.service';
+import { BusService } from '../../utils/data/model-services/bus.service';
+import { RouteService } from '../../utils/data/model-services/route.service';
+import { SegmentService } from '../../utils/data/model-services/segment.service';
 
 @Component({
   selector: 'app-map',
