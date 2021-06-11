@@ -7,7 +7,7 @@ import { UiService } from 'src/app/utils/ui-services/ui.service';
 @Component({
   selector: 'app-route-select',
   templateUrl: './route-select.component.html',
-  styleUrls: ['./route-select.component.css']
+  styleUrls: ['./route-select.component.scss']
 })
 export class RouteSelectComponent implements OnInit {
 
