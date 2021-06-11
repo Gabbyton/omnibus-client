@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteSelectComponent } from './components/route-select/route-select.component';
 import { HomeComponent } from './pages/home/home.component';
 import { SplashComponent } from './pages/splash/splash.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { SplashComponent } from './pages/splash/splash.component';
     GoogleMapsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
