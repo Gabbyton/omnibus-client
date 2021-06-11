@@ -15,6 +15,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ToggleButtonsComponent } from './components/toggle-buttons/toggle-buttons.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
+import { AboutDropdownComponent } from './components/about-dropdown/about-dropdown.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { SearchbarComponent } from './components/searchbar/searchbar.component';
     NavbarComponent,
     ToggleButtonsComponent,
     SearchbarComponent,
+    AboutDropdownComponent,
   ],
   imports: [
     BrowserModule,

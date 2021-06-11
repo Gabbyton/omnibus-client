@@ -1,8 +1,11 @@
 <nav class="navbar navbar-fixed-top d-flex justify-content-space-between align-items-center bg-primary py-1">
   <div>
-    <button type="button" class="btn">
-      <img src="assets/icons/menu-icons/logo-white.svg" alt="logo" width="32">
-    </button>
+    <div ngbDropdown>
+      <button type="button" class="btn" id="about-dropdown" ngbDropdownToggle>
+        <img src="assets/icons/menu-icons/logo-white.svg" alt="logo" width="32">
+      </button>
+      <app-about-dropdown></app-about-dropdown>
+    </div>
   </div>
   <div>
     <h5 class="text-light">WHEELS</h5>
