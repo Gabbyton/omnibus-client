@@ -13,6 +13,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { SplashComponent } from './pages/splash/splash.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { ToggleButtonsComponent } from './components/toggle-buttons/toggle-buttons.component';
+import { SearchbarComponent } from './components/searchbar/searchbar.component';
 
 
 @NgModule({
@@ -23,6 +25,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     HomeComponent,
     SplashComponent,
     NavbarComponent,
+    ToggleButtonsComponent,
+    SearchbarComponent,
   ],
   imports: [
     BrowserModule,
