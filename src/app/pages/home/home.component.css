@@ -1,9 +1,8 @@
-
-
 .topbar {
     position: fixed;
     top: 0;
     z-index: 200;
+    background-color: #e5853b;
 }
 
 .route-selection {
@@ -12,6 +11,39 @@
     padding-bottom: 10vh;
     z-index: 100;
 }
+
+.app-title {
+    flex: 1 1 auto;
+    text-align: center;
+    color: white;
+}
+
 .example-spacer {
     flex: 1 1 auto;
+}
+
+.mat-icon {
+    transform: scale(1.5);
+}
+
+.button-screen-overlay {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.toggle-buttons {
+    display: flex;
+    height: fit-content;
+    background-color: red;
+    flex-direction: column;
+}
+
+.toggle-buttons>button {
+    border: 0.1em solid orange;
+    background-color: white;
 }
