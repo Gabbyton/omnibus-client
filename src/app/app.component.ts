@@ -1,5 +1,4 @@
-import { AfterViewChecked, Component, OnInit } from '@angular/core';
-import { SplashService } from './utils/ui-services/splash.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',

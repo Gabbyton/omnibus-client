@@ -8,15 +8,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './components/map/map.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatRippleModule } from '@angular/material/core';
-import { MatChipsModule } from "@angular/material/chips";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { RouteSelectComponent } from './components/route-select/route-select.component';
 import { HomeComponent } from './pages/home/home.component';
 import { SplashComponent } from './pages/splash/splash.component';
@@ -36,14 +27,6 @@ import { SplashComponent } from './pages/splash/splash.component';
     GoogleMapsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatSidenavModule,
-    MatRippleModule,
-    MatChipsModule,
-    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
