@@ -12,6 +12,7 @@ import { RouteSelectComponent } from './components/route-select/route-select.com
 import { HomeComponent } from './pages/home/home.component';
 import { SplashComponent } from './pages/splash/splash.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RouteSelectComponent,
     HomeComponent,
     SplashComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
