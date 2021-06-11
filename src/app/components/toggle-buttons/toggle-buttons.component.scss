@@ -8,3 +8,12 @@
     background-color: white;
     border-radius: 0.5em;
 }
+
+.toggled {
+    background-color: #F47F20;
+    color: white;
+}
+
+.toggled-img {
+    filter: brightness(0) invert(1);
+}

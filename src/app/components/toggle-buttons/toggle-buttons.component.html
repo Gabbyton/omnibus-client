@@ -1,5 +1,6 @@
 <div class="d-flex flex-column toggle-button-container">
-    <button class="btn btn-outline-primary mt-1 toggle-button" *ngFor="let button of toggleButtons">
-        <img [src]="button.location" [alt]="button.icon" width="32">
+    <button class="btn btn-outline-primary mt-1 toggle-button" *ngFor="let button of toggleButtons; index as i"
+        (click)="toggleButton(i)" [ngClass]="{'toggled': button.toggled}">
+        <img [src]="button.location" [alt]="button.icon" width="32" [ngClass]="{'toggled-img': button.toggled}">
     </button>
 </div>
