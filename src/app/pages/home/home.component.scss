@@ -5,3 +5,17 @@
     top: 0;
     pointer-events: none;
 }
+
+.user-overlay {
+    height: 50%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background-color: white;
+    z-index: 2;
+    border-radius: 1em;
+}
+
+.favorites-title {
+    border-radius: 0.5em;
+}
