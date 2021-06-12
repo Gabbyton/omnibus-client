@@ -25,7 +25,7 @@ export class MapComponent implements OnInit {
   isLoading: boolean = false;
 
   // map fields
-  mapZoom = 19;
+  mapZoom = 17;
   mapCenter: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     mapTypeId: 'roadmap',
@@ -33,7 +33,7 @@ export class MapComponent implements OnInit {
     disableDoubleClickZoom: true,
     maxZoom: 20,
     minZoom: 8,
-    // gestureHandling: "cooperative", // TODO: add once testing on actual devices
+    gestureHandling: "greedy", // TODO: add once testing on actual devices
     disableDefaultUI: true,
   }
   segmentOptions: google.maps.PolylineOptions;
