@@ -17,6 +17,7 @@ import { ToggleButtonsComponent } from './components/toggle-buttons/toggle-butto
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { AboutDropdownComponent } from './components/about-dropdown/about-dropdown.component';
 import { SortablejsModule } from 'ngx-sortablejs';
+import { UserComponent } from './pages/user/user.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { SortablejsModule } from 'ngx-sortablejs';
     ToggleButtonsComponent,
     SearchbarComponent,
     AboutDropdownComponent,
+    UserComponent,
   ],
   imports: [
     BrowserModule,

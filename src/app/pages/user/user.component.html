@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="row">
+        <div class="col d-flex p-4">
+            <img src="assets/icons/user-icons/account.svg" alt="account" width="24">
+            <span class="text-primary pl-3">Sharon</span>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <span class="favorites-title px-3 text-light bg-primary">Favorite Destinations</span>
+    </div>
+    <div class="row mt-1">
+        <div class="col ml-3 d-flex">
+            <div [sortablejs]="items">
+                <div *ngFor="let item of items" class="py-2">
+                    <img src="assets/icons/user-icons/sort.svg" alt="sort-arrow-icon" class="d-inline" width="8">
+                    <span class="text-primary pl-1">{{ item }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col w-100" style="text-align: right;">
+            <button class="btn btn-outline-primary btn-sm mr-5" style="border-radius: 0.5em;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+                <span>new</span>
+            </button>
+        </div>
+    </div>
+</div>

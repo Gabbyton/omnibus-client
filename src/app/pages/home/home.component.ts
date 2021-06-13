@@ -8,11 +8,6 @@ import { SplashService } from 'src/app/utils/ui-services/splash.service';
 })
 export class HomeComponent implements OnInit {
   currentRouteName: string;
-  items = [
-    "Walmart",
-    "Library",
-    "Gallery"
-  ];
 
   constructor(private splashService: SplashService) { }
   isUserOpen: boolean = false;
