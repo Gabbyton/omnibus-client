@@ -31,4 +31,8 @@ export class StopService {
             .filter(stop => stop.routes.includes(routeId.toString()))
             .map(stop => new StopMarker(stop.location, stop.name, this.routeService.getRouteColor(this.routeService.currentRouteIDValue)).toJSON());
     }
+
+    getStop(id: string): Stop {
+        return this.stops.filter(stop => stop.stop_id == id)[0];
+    }
 }
