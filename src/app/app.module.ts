@@ -16,6 +16,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { ToggleButtonsComponent } from './components/toggle-buttons/toggle-buttons.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { AboutDropdownComponent } from './components/about-dropdown/about-dropdown.component';
+import { SortablejsModule } from 'ngx-sortablejs';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { AboutDropdownComponent } from './components/about-dropdown/about-dropdo
     HttpClientModule,
     BrowserAnimationsModule,
     NgbModule,
+    SortablejsModule.forRoot({animation: 150}),
   ],
   providers: [],
   bootstrap: [AppComponent]

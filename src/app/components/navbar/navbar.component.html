@@ -11,8 +11,9 @@
     <h5 class="text-light">WHEELS</h5>
   </div>
   <div>
-    <button type="button" class="btn">
-      <img src="assets/icons/menu-icons/account-white.svg" alt="logo" width="32">
+    <button type="button" class="btn" (click)="onUserClosedButtonPressed()">
+      <img [src]="isUserOpen ? homeIcon.location : accountIcon.location" alt="topbar-navigation-button" width="32"
+        [ngClass]="{'home-icon': isUserOpen}">
     </button>
   </div>
 </nav>
