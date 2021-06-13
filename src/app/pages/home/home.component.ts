@@ -38,4 +38,8 @@ export class HomeComponent implements OnInit {
       });
     });
   }
+
+  get displayStopsLength() {
+    return this.displayStops.length;
+  }
 }

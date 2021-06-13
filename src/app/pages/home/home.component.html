@@ -7,14 +7,17 @@
 <div class="overlay page-overlay user-overlay d-flex flex-column justify-content-center" *ngIf="isUserOpen">
     <app-user></app-user>
 </div>
-<div class="overlay page-overlay line-overlay pt-5" *ngIf="false">
+<div class="overlay page-overlay line-overlay pt-5" *ngIf="true">
     <div class="container py-5 px-4">
         <div class="row">
             <div class="col">
-                <div class="route-list">
-                    <div *ngFor="let stop of displayStops" class="d-flex">
-                        <span class="line-insert"></span>
-                        <div class="py-3">
+                <div class="route-list d-flex flex-column">
+                    <div *ngFor="let stop of displayStops; index as i" class="d-flex align-items-start">
+                        <div class="circle mt-2"></div>
+                        <div class="align-self-stretch line" [ngClass]="{'mt-2': i == 0}"
+                            *ngIf="i < displayStopsLength - 1">
+                        </div>
+                        <div class="pb-4 pl-3">
                             <span class="text-secondary"><strong>{{stop.name}}</strong></span>
                             <br>
                             <span class="secondary-light">14:53</span>

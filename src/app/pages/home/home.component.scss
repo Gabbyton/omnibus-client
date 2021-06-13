@@ -12,34 +12,29 @@
 .page-overlay {
     position: absolute;
     background-color: white;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .user-overlay {
-    z-index: 2;
-}
-
-.line-overlay {
     z-index: 3;
 }
 
-.route-list>div:before {
-    content: ' ';
-    display: inline-block;
+.line-overlay {
+    z-index: 2;
+}
+
+
+.circle {
     height: 10px;
     width: 10px;
     background-color: #F47F20;
     border-radius: 100%;
 }
 
-.route-list>div>.line-insert:before {
-    content: ' ';
-    white-space: pre;
-    display: inline-block;
+.line {
     width: 1px;
-    height: 100%;
     background-color: #F47F20;
-    transform: translateX(-5.5px);
+    transform: translateX(-5px);
 }
 
 .secondary-light {
