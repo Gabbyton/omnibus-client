@@ -19,6 +19,10 @@ import { AboutDropdownComponent } from './components/about-dropdown/about-dropdo
 import { SortablejsModule } from 'ngx-sortablejs';
 import { UserComponent } from './pages/user/user.component';
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
+const sliderAnimationDuration = 150;
 
 @NgModule({
   declarations: [
@@ -40,7 +44,8 @@ import { UserComponent } from './pages/user/user.component';
     HttpClientModule,
     BrowserAnimationsModule,
     NgbModule,
-    SortablejsModule.forRoot({animation: 150}),
+    SortablejsModule.forRoot({ animation: sliderAnimationDuration }),
+    SocketIoModule.forRoot(config),
   ],
   providers: [],
   bootstrap: [AppComponent]
