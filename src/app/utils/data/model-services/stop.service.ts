@@ -10,7 +10,7 @@ import { RouteService } from './route.service';
     providedIn: 'root'
 })
 export class StopService {
-    currentStopId: Subject<number> = new Subject();
+    private currentStopId: BehaviorSubject<number> = new BehaviorSubject(null);
     private stops: Stop[];
 
     constructor(
@@ -34,5 +34,17 @@ export class StopService {
 
     getStop(id: string): Stop {
         return this.stops.filter(stop => stop.stop_id == id)[0];
+    }
+
+    get currentStopObs(): Subject<number> {
+        return this.currentStopId;
+    }
+
+    get currentStopIdValue(): number {
+        return this.currentStopId.value;
+    }
+
+    setCurrentStopId(newCurrentStopId: number): void {
+        this.currentStopId.next(newCurrentStopId);
     }
 }

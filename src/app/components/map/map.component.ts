@@ -86,8 +86,7 @@ export class MapComponent implements OnInit {
   }
 
   changeCurrentStop(newStopId: number) {
-    console.log(`the new stop id: ${newStopId}`);
-
+    this.stopService.setCurrentStopId(newStopId);
   }
 
   startBusTimer(routeId: number, changeRoute?: boolean): void {
