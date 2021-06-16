@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { RouteService } from 'src/app/utils/data/model-services/route.service';
 import { StopService } from 'src/app/utils/data/model-services/stop.service';
 import { Stop } from 'src/app/utils/data/models/stop.model';
+import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 import { SplashService } from 'src/app/utils/ui-services/splash.service';
+import { UiService } from 'src/app/utils/ui-services/ui.service';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +19,23 @@ export class HomeComponent implements OnInit {
     private splashService: SplashService,
     private routeService: RouteService,
     private stopService: StopService,
+    private socketService: SocketService,
+    private uiService: UiService,
   ) { }
   isUserOpen: boolean = false;
 
   ngOnInit(): void {
+    // hide splash page when home screen is done loading
     this.splashService.hide();
+    // subscribe to current route changes to set the routes stops along current route
     this.getRouteStopNamesList();
+    // listen to error events for the socket service and disable home page ui accordingly
+    this.socketService.onConnectError().subscribe(err => {
+      this.uiService.setDisableToggle(true);
+    });
+    this.socketService.onConnect().subscribe(err => {
+      this.uiService.setDisableToggle(false);
+    });
   }
 
   toggleUserView(isUserOpen: boolean) {

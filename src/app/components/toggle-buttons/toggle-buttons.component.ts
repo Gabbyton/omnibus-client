@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OwnToggleService } from 'src/app/utils/ui-services/own-toggle.service';
+import { UiService } from 'src/app/utils/ui-services/ui.service';
 
 @Component({
   selector: 'app-toggle-buttons',
@@ -10,24 +11,40 @@ export class ToggleButtonsComponent implements OnInit {
   // TODO: transfer state to respective button services
   toggleButtons: MenuButton[];
 
-  constructor(private ownToggle: OwnToggleService) { }
+  constructor(
+    private uiService: UiService,
+    private ownToggle: OwnToggleService,
+  ) { }
 
   ngOnInit(): void {
+    // initially populate button array with null buttons
     this.initButtons();
-    this.toggleButtons.forEach(element => {
-      element['location'] = `assets/icons/toggle-buttons/${element.icon}.svg`;
+    // set button image asset location
+    this.toggleButtons.forEach(button => {
+      button['location'] = `assets/icons/toggle-buttons/${button.icon}.svg`;
     });
-    this.toggleButtons.push({ icon: 'menu', location: 'assets/icons/menu-icons/menu.svg', toggled: false, callback: null });
+    // add menu button
+    this.toggleButtons.push({ icon: 'menu', location: 'assets/icons/menu-icons/menu.svg', disabled: false, toggled: false, callback: null });
     this.assignButtonFunctions();
+    // set buttons to listen to ui service disable
+    this.uiService.disableToggleObs.subscribe(disable => {
+      for (let index = 0; index < this.toggleButtons.length; index++) {
+        if (index != MenuButtonIndex.favorite && index != MenuButtonIndex.menu) {
+          const button = this.toggleButtons[index];
+          if (button.toggled) button.toggled = false;
+          button.disabled = disable;
+        }
+      }
+    });
   }
 
   initButtons(): void {
     this.toggleButtons = [
-      { icon: 'favorite', location: null, toggled: false, callback: null },
-      { icon: 'own-toggle', location: null, toggled: false, callback: null },
-      { icon: 'bus-toggle', location: null, toggled: false, callback: null },
-      { icon: 'group-toggle', location: null, toggled: false, callback: null },
-      { icon: 'pool-toggle', location: null, toggled: false, callback: null },
+      { icon: 'favorite', location: null, disabled: false, toggled: false, callback: null },
+      { icon: 'own-toggle', location: null, disabled: false, toggled: false, callback: null },
+      { icon: 'bus-toggle', location: null, disabled: false, toggled: false, callback: null },
+      { icon: 'group-toggle', location: null, disabled: false, toggled: false, callback: null },
+      { icon: 'pool-toggle', location: null, disabled: false, toggled: false, callback: null },
     ]
   }
 
@@ -39,7 +56,6 @@ export class ToggleButtonsComponent implements OnInit {
     const button = this.toggleButtons[buttonIndex];
     // execute callback
     if (button.callback != null) {
-      console.log('hello');
       button.callback(this.toggleButtons[buttonIndex].toggled);
     }
     if (buttonIndex == MenuButtonIndex.poolToggle) {
@@ -48,8 +64,9 @@ export class ToggleButtonsComponent implements OnInit {
       const ownToggleFunction = ownToggleButton.callback;
       if (ownToggleFunction != null && !ownToggleButton.toggled) ownToggleFunction(ownToggleButton.toggled);
     }
-    if (buttonIndex != MenuButtonIndex.favorite && buttonIndex != MenuButtonIndex.menu)
+    if (buttonIndex != MenuButtonIndex.favorite && buttonIndex != MenuButtonIndex.menu) {
       button.toggled = !button.toggled;
+    }
   }
 }
 
@@ -57,6 +74,7 @@ interface MenuButton {
   icon: string;
   location: string;
   toggled: boolean;
+  disabled: boolean;
   callback: (state: boolean) => void;
 }
 

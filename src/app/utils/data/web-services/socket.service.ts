@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +30,17 @@ export class SocketService {
 
   onRouteExited(): Observable<any> {
     return this.socket.fromEvent('user-exited');
+  }
+
+  onConnect(): Observable<any> {
+    return this.socket.fromEvent('connect');
+  }
+
+  onConnectError(): Observable<any> {
+    return this.socket.fromEvent('connect_error');
+  }
+
+  onConnectFailed(): Observable<any> {
+    return this.socket.fromEvent('connect_failed');
   }
 }
