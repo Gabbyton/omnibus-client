@@ -5,7 +5,7 @@ import { RouteService } from '../data/model-services/route.service';
 import { SegmentService } from '../data/model-services/segment.service';
 import { StopService } from '../data/model-services/stop.service';
 
-const initToggleButtonState = false;
+const initToggleButtonState = true;
 
 @Injectable({
   providedIn: 'root'

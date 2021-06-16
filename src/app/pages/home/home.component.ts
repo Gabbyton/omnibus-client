@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     this.socketService.onConnectError().subscribe(err => {
       this.uiService.setDisableToggle(true);
     });
-    this.socketService.onConnect().subscribe(err => {
+    this.socketService.onConnect().subscribe(_ => {
       this.uiService.setDisableToggle(false);
     });
   }

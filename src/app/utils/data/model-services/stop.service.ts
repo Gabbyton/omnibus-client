@@ -36,7 +36,7 @@ export class StopService {
         return this.stops.filter(stop => stop.stop_id == id)[0];
     }
 
-    get currentStopObs(): Subject<number> {
+    get currentStopObs(): BehaviorSubject<number> {
         return this.currentStopId;
     }
 

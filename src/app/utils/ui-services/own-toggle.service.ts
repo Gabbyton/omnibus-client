@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { RouteService } from '../data/model-services/route.service';
+import { StopService } from '../data/model-services/stop.service';
 import { SocketService } from '../data/web-services/socket.service';
 import { UiService } from './ui.service';
 
@@ -12,13 +13,11 @@ export class OwnToggleService {
   constructor(
     private socketService: SocketService,
     private routeService: RouteService,
+    private stopService: StopService,
   ) { }
 
-  // TODO: get current stop
-  // TODO: create a stop service for getting the nearest stpo
   private getStopId() {
-    // TODO: replace with stop id
-    return 0;
+    return this.stopService.currentStopIdValue;
   }
 
   // TODO: error handling on server down while show location is on
