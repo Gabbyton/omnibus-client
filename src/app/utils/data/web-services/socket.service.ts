@@ -17,6 +17,10 @@ export class SocketService {
     });
   }
 
+  disconnect(): void {
+    this.socket.disconnect();
+  }
+
   onRouteJoined(): Observable<any> {
     return this.socket.fromEvent('user-joined');
   }
