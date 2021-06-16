@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { OwnToggleService } from 'src/app/utils/ui-services/own-toggle.service';
 
 @Component({
   selector: 'app-toggle-buttons',
@@ -7,35 +8,48 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ToggleButtonsComponent implements OnInit {
   // TODO: transfer state to respective button services
-  toggleButtons: MenuButton[] = [
-    { icon: 'favorite', location: null, toggled: false, callback: null },
-    { icon: 'own-toggle', location: null, toggled: false, callback: null },
-    { icon: 'bus-toggle', location: null, toggled: false, callback: null },
-    { icon: 'group-toggle', location: null, toggled: false, callback: null },
-    { icon: 'pool-toggle', location: null, toggled: false, callback: null },
-  ]
-  constructor() { }
+  toggleButtons: MenuButton[];
+
+  constructor(private ownToggle: OwnToggleService) { }
 
   ngOnInit(): void {
+    this.initButtons();
     this.toggleButtons.forEach(element => {
       element['location'] = `assets/icons/toggle-buttons/${element.icon}.svg`;
     });
     this.toggleButtons.push({ icon: 'menu', location: 'assets/icons/menu-icons/menu.svg', toggled: false, callback: null });
+    this.assignButtonFunctions();
   }
 
-  toggleButton(buttonIndex: number) {
+  initButtons(): void {
+    this.toggleButtons = [
+      { icon: 'favorite', location: null, toggled: false, callback: null },
+      { icon: 'own-toggle', location: null, toggled: false, callback: null },
+      { icon: 'bus-toggle', location: null, toggled: false, callback: null },
+      { icon: 'group-toggle', location: null, toggled: false, callback: null },
+      { icon: 'pool-toggle', location: null, toggled: false, callback: null },
+    ]
+  }
+
+  assignButtonFunctions(): void {
+    this.toggleButtons[MenuButtonIndex.ownToggle].callback = (state: boolean) => { this.ownToggle.toggleShowLocation(state) }; // wrap in arrow function to pass context
+  }
+
+  toggleButton(buttonIndex: number): void {
     const button = this.toggleButtons[buttonIndex];
+    // execute callback
+    if (button.callback != null) {
+      console.log('hello');
+      button.callback(this.toggleButtons[buttonIndex].toggled);
+    }
     if (buttonIndex == MenuButtonIndex.poolToggle) {
       const ownToggleButton = this.toggleButtons[MenuButtonIndex.ownToggle];
       ownToggleButton.toggled = true; // set own toggle button to true
       const ownToggleFunction = ownToggleButton.callback;
-      if (ownToggleFunction != null) ownToggleFunction(ownToggleButton.toggled);
+      if (ownToggleFunction != null && !ownToggleButton.toggled) ownToggleFunction(ownToggleButton.toggled);
     }
     if (buttonIndex != MenuButtonIndex.favorite && buttonIndex != MenuButtonIndex.menu)
       button.toggled = !button.toggled;
-    // execute callback
-    if (button.callback != null)
-      button.callback(this.toggleButtons[buttonIndex].toggled);
   }
 }
 

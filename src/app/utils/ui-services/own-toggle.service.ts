@@ -20,10 +20,17 @@ export class OwnToggleService {
     return 0;
   }
 
+  // TODO: error handling on server down while show location is on
   toggleShowLocation(currentlyShowingLocation: boolean) {
     if (currentlyShowingLocation == true) {
       // turn off show location
-      this.socketService.disconnect();
+      this.socketService.onRouteExited().pipe(
+        first(),
+      ).subscribe(exitData => {
+        console.log('all rooms successfully exited!');
+        console.log(exitData);
+      });
+      this.socketService.routeUnsubscribeAll();
     } else {
       this.socketService.routeSubscribe(this.routeService.currentRouteIDValue, this.getStopId());
       this.socketService.onRouteJoined().pipe(

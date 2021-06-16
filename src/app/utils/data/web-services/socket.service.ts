@@ -12,9 +12,13 @@ export class SocketService {
 
   routeSubscribe(routeId: number, stopId: number): void {
     this.socket.emit('subscribe', {
-      routeid: routeId,
+      routeId: routeId,
       stopId: stopId,
     });
+  }
+
+  routeUnsubscribeAll(): void {
+    this.socket.emit('unsubscribe');
   }
 
   disconnect(): void {
@@ -23,5 +27,9 @@ export class SocketService {
 
   onRouteJoined(): Observable<any> {
     return this.socket.fromEvent('user-joined');
+  }
+
+  onRouteExited(): Observable<any> {
+    return this.socket.fromEvent('user-exited');
   }
 }
