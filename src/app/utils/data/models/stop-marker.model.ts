@@ -4,8 +4,10 @@ const ICON_SIZE = 64;
 
 export class StopMarker extends Marker {
     color: string;
-    constructor(location: number[], name: string, color: string) {
+    stopId: string;
+    constructor(stopId: string, location: number[], name: string, color: string) {
         super(location, name, color);
+        this.stopId = stopId;
     }
 
     public toJSON(): any {
@@ -16,6 +18,7 @@ export class StopMarker extends Marker {
                 lng: this.position[1],
             },
             title: this.title,
+            stopId: this.stopId,
             options: {
                 icon: {
                     // draw icon manually

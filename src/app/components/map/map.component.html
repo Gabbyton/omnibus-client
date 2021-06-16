@@ -1,7 +1,7 @@
 <google-map class="map" height="100vh" width="100vw" [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions"
   *ngIf="!isLoading else mapLoadingScreen">
   <map-marker *ngFor="let marker of displayMarkers" [position]="marker.position" [label]="marker.label"
-    [title]="marker.title" [options]="marker.options">
+    [title]="marker.title" [options]="marker.options" (mapClick)="changeCurrentStop(marker.stopId)">
   </map-marker>
   <map-marker *ngFor="let bus of displayVehicles | keyvalue" [position]="bus.value.position" [label]="bus.value.label"
     [title]="bus.value.title" [options]="bus.value.options">

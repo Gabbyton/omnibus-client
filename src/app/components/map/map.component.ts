@@ -85,6 +85,10 @@ export class MapComponent implements OnInit {
     this.updateMapObjects(newRoute, true);
   }
 
+  changeCurrentStop(newStopId: number) {
+    console.log(`the new stop id: ${newStopId}`);
+
+  }
 
   startBusTimer(routeId: number, changeRoute?: boolean): void {
     this.vehicleUpdateTimerSubscription = timer(0, 500).pipe(
