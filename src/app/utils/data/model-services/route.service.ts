@@ -44,7 +44,7 @@ export class RouteService {
     }
 
     getAllRoutes(): Route[] {
-        return Array.from(this.routes.values());
+        return <Route[]>Array.from(this.routes.values());
     }
 
     setCurrentRoute(newCurrentRouteID: number) {
