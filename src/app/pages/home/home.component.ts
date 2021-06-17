@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 import { SplashService } from 'src/app/utils/ui-services/splash.service';
 import { UiService } from 'src/app/utils/ui-services/ui.service';
-import { ToastrService } from 'ngx-toastr';
 import { StopService } from 'src/app/utils/data/model-services/stop.service';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
@@ -43,6 +42,18 @@ export class HomeComponent implements OnInit {
     ).subscribe(newStopName => {
       const newStop = this.stopService.getStop(`${newStopName}`);
       this.currentStopName = newStop.name;
+      this.socketService.routeUnsubscribeAll();
+    });
+    this.socketService.onRouteExited().pipe(
+    ).subscribe(exitData => {
+      // TODO: remove
+      console.log(exitData);
+    });
+    this.socketService.onRouteJoined().pipe(
+    ).subscribe(joinData => {
+      // additional on route join operations here
+      // TODO: remove
+      console.log(joinData);
     });
   }
 

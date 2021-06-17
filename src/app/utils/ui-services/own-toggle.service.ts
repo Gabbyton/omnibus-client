@@ -24,22 +24,9 @@ export class OwnToggleService {
   toggleShowLocation(currentlyShowingLocation: boolean) {
     if (currentlyShowingLocation == true) {
       // turn off show location
-      this.socketService.onRouteExited().pipe(
-        first(),
-      ).subscribe(exitData => {
-        // TODO: remove
-        console.log(exitData);
-      });
       this.socketService.routeUnsubscribeAll();
     } else {
       this.socketService.routeSubscribe(this.routeService.currentRouteIDValue, this.getStopId());
-      this.socketService.onRouteJoined().pipe(
-        first(),
-      ).subscribe(joinData => {
-        // additional on route join operations here
-        // TODO: remove
-        console.log(joinData);
-      });
     }
   }
 }

@@ -8,6 +8,7 @@ import { BusService } from '../../utils/data/model-services/bus.service';
 import { RouteService } from '../../utils/data/model-services/route.service';
 import { SegmentService } from '../../utils/data/model-services/segment.service';
 import { StopMarker } from 'src/app/utils/data/models/stop-marker.model';
+import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 
 const mapDefaultZoom = 17;
 
@@ -46,6 +47,7 @@ export class MapComponent implements OnInit {
     private busService: BusService,
     private routeService: RouteService,
     private segmentService: SegmentService,
+    private socketService: SocketService,
   ) { }
 
   ngOnInit() {
