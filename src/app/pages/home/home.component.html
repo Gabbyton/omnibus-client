@@ -1,30 +1,12 @@
-<app-navbar (onUserClosed)="toggleUserView($event)"></app-navbar>
+<app-navbar (onUserButtonClicked)="toggleUserView($event)"></app-navbar>
 <app-map></app-map>
 <div class="overlay ui-overlay d-flex justify-content-between align-items-end">
     <app-searchbar class="mb-2 ml-2 w-100"></app-searchbar>
-    <app-toggle-buttons class="p-2"></app-toggle-buttons>
+    <app-toggle-buttons class="p-2" (onMenuButtonClicked)="toggleRoutesView($event)"></app-toggle-buttons>
 </div>
 <div class="overlay page-overlay user-overlay d-flex flex-column justify-content-center" *ngIf="isUserOpen">
     <app-user></app-user>
 </div>
-<div class="overlay page-overlay line-overlay pt-5" *ngIf="false">
-    <div class="container py-5 px-4">
-        <div class="row">
-            <div class="col">
-                <div class="route-list d-flex flex-column">
-                    <div *ngFor="let stop of displayStops; index as i" class="d-flex align-items-start">
-                        <div class="circle mt-2"></div>
-                        <div class="align-self-stretch line" [ngClass]="{'mt-2': i == 0}"
-                            *ngIf="i < displayStopsLength - 1">
-                        </div>
-                        <div class="pb-4 pl-3">
-                            <span class="text-secondary"><strong>{{stop.name}}</strong></span>
-                            <br>
-                            <span class="secondary-light">14:53</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="overlay page-overlay line-overlay pt-5" *ngIf="isRouteOpen">
+    <app-routes-list></app-routes-list>
 </div>

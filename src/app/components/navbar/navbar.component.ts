@@ -7,7 +7,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
   isUserOpen: boolean = false;
-  @Output('onUserClosed') onUserClosed = new EventEmitter<boolean>();
+  @Output('onUserButtonClicked') onUserButtonClicked = new EventEmitter<boolean>();
 
   accountIcon = { icon: 'account', location: 'assets/icons/menu-icons/account-white.svg' };
   homeIcon = { icon: 'home', location: 'assets/icons/user-icons/home.svg' };
@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
 
   onUserClosedButtonPressed(): void {
     this.isUserOpen = !this.isUserOpen;
-    this.onUserClosed.emit(this.isUserOpen);
+    this.onUserButtonClicked.emit(this.isUserOpen);
   }
 
 }

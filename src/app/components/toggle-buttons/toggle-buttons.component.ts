@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { OwnToggleService } from 'src/app/utils/ui-services/own-toggle.service';
 import { UiService } from 'src/app/utils/ui-services/ui.service';
 
@@ -8,8 +8,9 @@ import { UiService } from 'src/app/utils/ui-services/ui.service';
   styleUrls: ['./toggle-buttons.component.scss']
 })
 export class ToggleButtonsComponent implements OnInit {
-  // TODO: transfer state to respective button services
+  @Output('onMenuButtonClicked') onMenuButtonClicked = new EventEmitter<boolean>();
   toggleButtons: MenuButton[];
+  isRouteOpen: boolean = false;
 
   constructor(
     private uiService: UiService,
@@ -43,13 +44,12 @@ export class ToggleButtonsComponent implements OnInit {
       { icon: 'favorite', location: null, disabled: false, toggled: false, callback: null },
       { icon: 'own-toggle', location: null, disabled: false, toggled: false, callback: null },
       { icon: 'bus-toggle', location: null, disabled: false, toggled: false, callback: null },
-      { icon: 'group-toggle', location: null, disabled: false, toggled: false, callback: null },
-      { icon: 'pool-toggle', location: null, disabled: false, toggled: false, callback: null },
     ]
   }
 
   assignButtonFunctions(): void {
     this.toggleButtons[MenuButtonIndex.ownToggle].callback = (state: boolean) => { this.ownToggle.toggleShowLocation(state) }; // wrap in arrow function to pass context
+    this.toggleButtons[MenuButtonIndex.menu].callback = () => { this.toggleRoutePage() }; // wrap in arrow function to pass context
   }
 
   toggleButton(buttonIndex: number): void {
@@ -58,15 +58,14 @@ export class ToggleButtonsComponent implements OnInit {
     if (button.callback != null) {
       button.callback(this.toggleButtons[buttonIndex].toggled);
     }
-    if (buttonIndex == MenuButtonIndex.poolToggle) {
-      const ownToggleButton = this.toggleButtons[MenuButtonIndex.ownToggle];
-      ownToggleButton.toggled = true; // set own toggle button to true
-      const ownToggleFunction = ownToggleButton.callback;
-      if (ownToggleFunction != null && !ownToggleButton.toggled) ownToggleFunction(ownToggleButton.toggled);
-    }
     if (buttonIndex != MenuButtonIndex.favorite && buttonIndex != MenuButtonIndex.menu) {
       button.toggled = !button.toggled;
     }
+  }
+
+  toggleRoutePage() {
+    this.isRouteOpen = !this.isRouteOpen;
+    this.onMenuButtonClicked.emit(this.isRouteOpen);
   }
 }
 
@@ -75,14 +74,12 @@ interface MenuButton {
   location: string;
   toggled: boolean;
   disabled: boolean;
-  callback: (state: boolean) => void;
+  callback: (state?: boolean) => void;
 }
 
 enum MenuButtonIndex {
   favorite = 0,
   ownToggle = 1,
   busToggle = 2,
-  groupToggle = 3,
-  poolToggle = 4,
-  menu = 5,
+  menu = 3,
 }

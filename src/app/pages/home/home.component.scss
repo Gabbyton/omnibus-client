@@ -22,21 +22,3 @@
 .line-overlay {
     z-index: 2;
 }
-
-
-.circle {
-    height: 10px;
-    width: 10px;
-    background-color: #F47F20;
-    border-radius: 100%;
-}
-
-.line {
-    width: 1px;
-    background-color: #F47F20;
-    transform: translateX(-5px);
-}
-
-.secondary-light {
-    color: #F6944D;
-}
