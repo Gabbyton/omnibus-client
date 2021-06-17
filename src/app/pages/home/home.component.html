@@ -1,5 +1,10 @@
 <app-navbar (onUserButtonClicked)="toggleUserView($event)"></app-navbar>
 <app-map></app-map>
+<div class="overlay ui-overlay mt-5 d-flex justify-content-center">
+    <div class="pill py-2 px-3 mt-3 mx-1 shadow bg-white"><span class="text-secondary"
+            *ngIf="currentStopName == null; else currentStopContainer">Please select a
+            stop</span></div>
+</div>
 <div class="overlay ui-overlay d-flex justify-content-between align-items-end">
     <app-searchbar class="mb-2 ml-2 w-100"></app-searchbar>
     <app-toggle-buttons class="p-2" (onMenuButtonClicked)="toggleRoutesView($event)"></app-toggle-buttons>
@@ -10,3 +15,7 @@
 <div class="overlay page-overlay line-overlay pt-5" *ngIf="isRouteOpen">
     <app-routes-list (OnHomeButtonClicked)="toggleRoutesView(false)"></app-routes-list>
 </div>
+
+<ng-template #currentStopContainer>
+    <span>Currently waiting at <strong>{{ this.currentStopName }}</strong></span>
+</ng-template>

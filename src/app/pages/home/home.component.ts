@@ -3,6 +3,8 @@ import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 import { SplashService } from 'src/app/utils/ui-services/splash.service';
 import { UiService } from 'src/app/utils/ui-services/ui.service';
 import { ToastrService } from 'ngx-toastr';
+import { StopService } from 'src/app/utils/data/model-services/stop.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -12,8 +14,11 @@ import { ToastrService } from 'ngx-toastr';
 export class HomeComponent implements OnInit {
   isUserOpen: boolean = false;
   isRouteOpen: boolean = false;
+  currentStopName: string = null;
+  currentStopColor: string = null;
 
   constructor(
+    private stopService: StopService,
     private splashService: SplashService,
     private socketService: SocketService,
     private uiService: UiService,
@@ -35,6 +40,13 @@ export class HomeComponent implements OnInit {
       //   tapToDismiss: false,
       //   positionClass: 'inline',
       // });
+    });
+    // change stop name displayed when selecting new stop
+    this.stopService.currentStopObs.pipe(
+      filter(stop => stop != null),
+    ).subscribe(newStopName => {
+      const newStop = this.stopService.getStop(`${newStopName}`);
+      this.currentStopName = newStop.name;
     });
   }
 
