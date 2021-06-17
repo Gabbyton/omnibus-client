@@ -14,3 +14,17 @@
 .secondary-light {
     color: #F6944D;
 }
+
+.toggle-button {
+    padding: 0.2em;
+    aspect-ratio: 1;
+    background-color: white;
+    border-radius: 0.5em;
+}
+
+.bottom-bar {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    right: 0;
+}

@@ -10,7 +10,6 @@ import { UiService } from 'src/app/utils/ui-services/ui.service';
 export class ToggleButtonsComponent implements OnInit {
   @Output('onMenuButtonClicked') onMenuButtonClicked = new EventEmitter<boolean>();
   toggleButtons: MenuButton[];
-  isRouteOpen: boolean = false;
 
   constructor(
     private uiService: UiService,
@@ -64,8 +63,7 @@ export class ToggleButtonsComponent implements OnInit {
   }
 
   toggleRoutePage() {
-    this.isRouteOpen = !this.isRouteOpen;
-    this.onMenuButtonClicked.emit(this.isRouteOpen);
+    this.onMenuButtonClicked.emit(true);
   }
 }
 

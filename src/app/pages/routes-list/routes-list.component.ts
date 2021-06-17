@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouteService } from 'src/app/utils/data/model-services/route.service';
 import { StopService } from 'src/app/utils/data/model-services/stop.service';
 import { Stop } from 'src/app/utils/data/models/stop.model';
@@ -9,6 +9,7 @@ import { Stop } from 'src/app/utils/data/models/stop.model';
   styleUrls: ['./routes-list.component.scss']
 })
 export class RoutesListComponent implements OnInit {
+  @Output('OnHomeButtonClicked') onHomeButtonClicked = new EventEmitter<void>();
   displayStops: Stop[] = [];
   constructor(
     private routeService: RouteService,
@@ -20,7 +21,7 @@ export class RoutesListComponent implements OnInit {
     this.getRouteStopNamesList();
   }
 
-  getRouteStopNamesList() {
+  getRouteStopNamesList(): void {
     this.routeService.currentRouteIDSubject.subscribe(routeId => {
       this.displayStops = [];
       var stopsAlongRoute = this.routeService.getRoute(routeId).stops;
@@ -30,8 +31,12 @@ export class RoutesListComponent implements OnInit {
     });
   }
 
-  get displayStopsLength() {
+  get displayStopsLength(): number {
     return this.displayStops.length;
+  }
+
+  homeButtonClicked(): void {
+    this.onHomeButtonClicked.emit();
   }
 
 }

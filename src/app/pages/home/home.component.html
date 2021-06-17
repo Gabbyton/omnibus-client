@@ -8,5 +8,5 @@
     <app-user></app-user>
 </div>
 <div class="overlay page-overlay line-overlay pt-5" *ngIf="isRouteOpen">
-    <app-routes-list></app-routes-list>
+    <app-routes-list (OnHomeButtonClicked)="toggleRoutesView(false)"></app-routes-list>
 </div>
