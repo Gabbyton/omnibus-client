@@ -1,7 +1,9 @@
-<google-map class="map" height="100vh" width="100vw" [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions"
-  *ngIf="!isLoading else mapLoadingScreen">
-  <map-marker *ngFor="let marker of displayMarkers" [position]="marker.position" [label]="marker.label"
-    [title]="marker.title" [options]="marker.options" (mapClick)="changeCurrentStop(marker.stopId)">
+<google-map class="map" height="100vh" width="100vw" [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions">
+  <map-marker *ngIf="currentStopMarker != null" [position]="currentStopMarker.position" [label]="currentStopMarker.label"
+    [title]="currentStopMarker.title" [options]="currentStopMarker.options">
+  </map-marker>
+  <map-marker *ngFor="let marker of displayMarkers; index as i" [position]="marker.position" [label]="marker.label"
+    [title]="marker.title" [options]="marker.options" (mapClick)="changeCurrentStop(marker.stopId, i)">
   </map-marker>
   <map-marker *ngFor="let bus of displayVehicles | keyvalue" [position]="bus.value.position" [label]="bus.value.label"
     [title]="bus.value.title" [options]="bus.value.options">
@@ -10,11 +12,3 @@
   <map-polyline *ngFor="let segment of drawSegmentSet" [path]="segment" [options]="segmentOptions">
   </map-polyline>
 </google-map>
-
-<ng-template #mapLoadingScreen>
-  <div class="loading-screen">
-    <div class="spinner">
-      <mat-spinner [diameter]="100"></mat-spinner>
-    </div>
-  </div>
-</ng-template>

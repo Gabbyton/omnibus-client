@@ -29,7 +29,12 @@ export class StopService {
     getStopsToDisplay(routeId: number): any[] {
         return this.stops
             .filter(stop => stop.routes.includes(routeId.toString()))
-            .map(stop => new StopMarker(stop.stop_id, stop.location, stop.name, this.routeService.getRouteColor(this.routeService.currentRouteIDValue)).toJSON());
+            .map(stop => new StopMarker(
+                stop.stop_id,
+                stop.location,
+                stop.name,
+                this.routeService.getRouteColor(this.routeService.currentRouteIDValue)
+            ).toJSON());
     }
 
     getStop(id: string): Stop {

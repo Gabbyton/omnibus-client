@@ -7,6 +7,9 @@ import { StopService } from '../../utils/data/model-services/stop.service';
 import { BusService } from '../../utils/data/model-services/bus.service';
 import { RouteService } from '../../utils/data/model-services/route.service';
 import { SegmentService } from '../../utils/data/model-services/segment.service';
+import { StopMarker } from 'src/app/utils/data/models/stop-marker.model';
+
+const mapDefaultZoom = 17;
 
 @Component({
   selector: 'app-map',
@@ -15,17 +18,17 @@ import { SegmentService } from '../../utils/data/model-services/segment.service'
 })
 export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
-
   // field for rendering
   displayMarkers: any[] = [];
   drawSegmentSet: any[] = [];
   displayVehicles: Map<number, any>;
+  currentStopMarker: any;
 
   private vehicleUpdateTimerSubscription: Subscription;
   isLoading: boolean = false;
 
   // map fields
-  mapZoom = 17;
+  mapZoom = mapDefaultZoom;
   mapCenter: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     mapTypeId: 'roadmap',
@@ -47,7 +50,7 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // TODO: add error handling to transloc data retrievals
-    // TODO: look up algorithms to smoothen location transition / get rid of backlog
+    // TODO: get rid of backlog
     this.prefetchMapData();
   }
 
@@ -85,8 +88,13 @@ export class MapComponent implements OnInit {
     this.updateMapObjects(newRoute, true);
   }
 
-  changeCurrentStop(newStopId: number) {
+  changeCurrentStop(newStopId: number, displayMarkerIndex: number) {
     this.stopService.setCurrentStopId(newStopId);
+    const rawPosition = this.displayMarkers[displayMarkerIndex].position;
+    const finalPosition = [rawPosition.lat, rawPosition.lng];
+    // TODO: replace with own custom marker
+    this.currentStopMarker = new StopMarker(`${newStopId}`, finalPosition, 'Current Stop', '00ff00', 60).toJSON();
+    this.map.panTo(rawPosition);
   }
 
   startBusTimer(routeId: number, changeRoute?: boolean): void {
@@ -98,3 +106,4 @@ export class MapComponent implements OnInit {
     });
   }
 }
+
