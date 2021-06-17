@@ -41,6 +41,14 @@ export class StopService {
         return this.stops.filter(stop => stop.stop_id == id)[0];
     }
 
+    get allStops(): Stop[] {
+        return this.stops;
+    }
+
+    get allStopNames(): string[] {
+        return this.stops.map(stop => stop.name);
+    }
+
     get currentStopObs(): BehaviorSubject<number> {
         return this.currentStopId;
     }

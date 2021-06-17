@@ -21,6 +21,7 @@ import { UserComponent } from './pages/user/user.component';
 import { ToastrModule } from 'ngx-toastr';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { RoutesListComponent } from './pages/routes-list/routes-list.component';
+import { FormsModule } from '@angular/forms';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 const sliderAnimationDuration = 150;
@@ -44,6 +45,7 @@ const sliderAnimationDuration = 150;
     AppRoutingModule,
     GoogleMapsModule,
     HttpClientModule,
+    FormsModule,
     BrowserAnimationsModule,
     NgbModule,
     SortablejsModule.forRoot({ animation: sliderAnimationDuration }),
