@@ -10,10 +10,16 @@ export class SocketService {
   constructor(private socket: Socket) { }
 
   routeSubscribe(routeId: number, stopId: number): void {
-    this.socket.emit('subscribe', {
-      routeId: routeId,
-      stopId: stopId,
-    });
+    if (this.socketInstance.connected) {
+      this.socket.emit('subscribe', {
+        routeId: routeId,
+        stopId: stopId,
+      });
+    }
+  }
+
+  private get socketInstance() {
+    return this.socket.ioSocket;
   }
 
   routeUnsubscribeAll(): void {
