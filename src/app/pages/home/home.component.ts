@@ -5,6 +5,7 @@ import { UiService } from 'src/app/utils/ui-services/ui.service';
 import { ToastrService } from 'ngx-toastr';
 import { StopService } from 'src/app/utils/data/model-services/stop.service';
 import { filter } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -22,24 +23,19 @@ export class HomeComponent implements OnInit {
     private splashService: SplashService,
     private socketService: SocketService,
     private uiService: UiService,
-    private toastr: ToastrService,
   ) { }
 
   ngOnInit(): void {
     // hide splash page when home screen is done loading
     this.splashService.hide();
     // listen to error events for the socket service and disable home page ui accordingly
+    combineLatest([this.socketService.onConnect(), this.stopService.currentStopObs]).pipe(
+      filter(data => data[1] != null),
+    ).subscribe(_ => {
+      this.uiService.setDisableToggle(false);
+    });
     this.socketService.onConnectError().subscribe(err => {
       this.uiService.setDisableToggle(true);
-    });
-    this.socketService.onConnect().subscribe(_ => {
-      this.uiService.setDisableToggle(false);
-      // this.toastr.info('Select Stop', 'Select a stop to enable tracking', {
-      //   disableTimeOut: true,
-      //   closeButton: false,
-      //   tapToDismiss: false,
-      //   positionClass: 'inline',
-      // });
     });
     // change stop name displayed when selecting new stop
     this.stopService.currentStopObs.pipe(
