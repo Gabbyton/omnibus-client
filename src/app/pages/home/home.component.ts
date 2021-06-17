@@ -37,7 +37,12 @@ export class HomeComponent implements OnInit {
     });
     this.socketService.onConnect().subscribe(_ => {
       this.uiService.setDisableToggle(false);
-      // this.toastr.success('Hello world!', 'Toastr fun!');
+      // this.toastr.info('Select Stop', 'Select a stop to enable tracking', {
+      //   disableTimeOut: true,
+      //   closeButton: false,
+      //   tapToDismiss: false,
+      //   positionClass: 'inline',
+      // });
     });
   }
 
