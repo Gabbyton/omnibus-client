@@ -29,6 +29,7 @@
     "marker-animate-unobtrusive": "^0.2.9",
     "ngx-socket-io": "^4.0.0",
     "ngx-sortablejs": "^11.1.0",
+    "ngx-toastr": "^13.2.1",
     "popper.js": "^1.16.1",
     "rxjs": "~6.6.0",
     "sortablejs": "^1.13.0",

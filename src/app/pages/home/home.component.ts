@@ -5,6 +5,7 @@ import { Stop } from 'src/app/utils/data/models/stop.model';
 import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 import { SplashService } from 'src/app/utils/ui-services/splash.service';
 import { UiService } from 'src/app/utils/ui-services/ui.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit {
     private stopService: StopService,
     private socketService: SocketService,
     private uiService: UiService,
+    private toastr: ToastrService,
   ) { }
   isUserOpen: boolean = false;
 
@@ -35,6 +37,7 @@ export class HomeComponent implements OnInit {
     });
     this.socketService.onConnect().subscribe(_ => {
       this.uiService.setDisableToggle(false);
+      // this.toastr.success('Hello world!', 'Toastr fun!');
     });
   }
 

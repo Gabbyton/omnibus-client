@@ -18,7 +18,7 @@ import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { AboutDropdownComponent } from './components/about-dropdown/about-dropdown.component';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { UserComponent } from './pages/user/user.component';
-
+import { ToastrModule } from 'ngx-toastr';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
@@ -46,6 +46,7 @@ const sliderAnimationDuration = 150;
     NgbModule,
     SortablejsModule.forRoot({ animation: sliderAnimationDuration }),
     SocketIoModule.forRoot(config),
+    ToastrModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]
