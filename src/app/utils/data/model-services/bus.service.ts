@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { catchError, first, map, mergeMap, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { catchError, filter, first, map, tap } from "rxjs/operators";
 import { Vehicle } from "../models/vehicle";
 import { VehicleMarker } from "../models/vehicle-marker.model";
 import { TranslocService } from "../web-services/transloc.service";
@@ -10,24 +10,28 @@ import { RouteService } from "./route.service";
     providedIn: 'root',
 })
 export class BusService {
-    private vehicles: Vehicle[];
-    private persistentVehicleData: Map<number, any> = new Map();
+    private vehicles: Vehicle[]; // saves the vehicles as Vehicle object present in persistent vehicle data
+    private persistentVehicleData: Map<number, any> = new Map(); // maps the vehicle by id to vehicle marker data
 
     constructor(
         private transloc: TranslocService,
         private routeService: RouteService,
     ) { }
 
-    private getCurrentBusPositions(routeId: number): Observable<Vehicle[]> {
-        return this.transloc.getArrivalData(routeId).pipe(
+    private getCurrentBusPositions(): Observable<Vehicle[]> {
+        return this.transloc.getAllArrivalData().pipe(
             first(),
             catchError(_ => []),
+            map(busArray => {
+                return busArray
+                    .filter((bus: Vehicle) => this.routeService.activeRoutes.includes(bus.route_id))
+            }),
             tap(data => { this.vehicles = data }),
         );
     }
 
-    private createBusesToDisplay(routeId: number): Observable<any> {
-        return this.getCurrentBusPositions(routeId).pipe(
+    private createBusesToDisplay(): Observable<any> {
+        return this.getCurrentBusPositions().pipe(
             tap(_ => this.persistentVehicleData.clear()), // initially clear map of buses
             map(data => {
                 data.map(bus => {
@@ -39,11 +43,11 @@ export class BusService {
             }));
     }
 
-    getBusesToDisplay(routeId: number, changeRoute?: boolean): Observable<any> {
+    getBusesToDisplay(changeRoute?: boolean): Observable<any> {
         if (this.vehicles == null || (changeRoute ?? false)) { // determine whether the bus map should be created or reset
-            return this.createBusesToDisplay(routeId);
+            return this.createBusesToDisplay();
         } else {
-            return this.getCurrentBusPositions(routeId).pipe(
+            return this.getCurrentBusPositions().pipe(
                 map(data => {
                     data.forEach(bus => {
                         this.persistentVehicleData.get(bus.id).position =
@@ -54,5 +58,4 @@ export class BusService {
             )
         }
     }
-
 }

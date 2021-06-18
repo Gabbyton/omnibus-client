@@ -52,9 +52,13 @@ export class TranslocService {
       }));
   }
 
-  getArrivalData(routeId: number) {
+  getArrivalData(routeId: number): Observable<Vehicle[]> {
     return this.http.get<Vehicle[]>(`${SERVER_URL}/get-arrivals`, dataRetrievalHeaders).pipe(
       map(busArray => busArray.filter(bus => bus.route_id == routeId))
     );
+  }
+
+  getAllArrivalData(): Observable<Vehicle[]> {
+    return this.http.get<Vehicle[]>(`${SERVER_URL}/get-arrivals`, dataRetrievalHeaders);
   }
 }

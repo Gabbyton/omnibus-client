@@ -62,14 +62,14 @@ export class MapComponent implements OnInit {
   }
 
   prefetchMapData() {
-    this.updateMapObjects(this.routeService.currentRouteIDValue);
+    this.updateMapObjects();
     this.initMap();
     this.routeService.currentRouteIDSubject.subscribe(newCurrentRouteID => {
       this.changeRoute(newCurrentRouteID);
     });
   }
 
-  updateMapObjects(routeId: number, changeRoute?: boolean): void {
+  updateMapObjects(changeRoute?: boolean): void {
     this.displayMarkers = [];
     this.drawSegmentSuperset = [];
     // TODO: get array of shared intersections and display an intersection icon respectively
@@ -84,13 +84,13 @@ export class MapComponent implements OnInit {
       });
     }
     console.log(this.drawSegmentSuperset);
-    this.startBusTimer(routeId, changeRoute);
+    this.startBusTimer(changeRoute);
   }
 
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of route area
     this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
-    this.updateMapObjects(newRoute, true);
+    this.updateMapObjects(true);
   }
 
   changeCurrentStop(newStopId: number, displayMarkerIndex: number) {
@@ -102,9 +102,9 @@ export class MapComponent implements OnInit {
     this.map.panTo(rawPosition);
   }
 
-  startBusTimer(routeId: number, changeRoute?: boolean): void {
+  startBusTimer(changeRoute?: boolean): void {
     this.vehicleUpdateTimerSubscription = timer(0, 500).pipe(
-      concatMap(_ => this.busService.getBusesToDisplay(routeId, changeRoute)),
+      concatMap(_ => this.busService.getBusesToDisplay(changeRoute)),
       tap(_ => { changeRoute = false }),
     ).subscribe(busesToDisplay => {
       this.displayVehicles = busesToDisplay;
