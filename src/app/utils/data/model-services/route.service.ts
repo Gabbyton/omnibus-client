@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { catchError, concatMap, tap } from "rxjs/operators";
 import { TranslocService } from "../web-services/transloc.service";
 import { Route } from "../models/route.model";
 
 const INITIAL_ROUTE_ID = 8004946;
-const defaultActiveRoutes = [8004946, 8004948];
+const defaultActiveRoutes = [];
 @Injectable({
     providedIn: 'root',
 })
@@ -13,6 +13,8 @@ export class RouteService {
     private routes: Map<number, Route> = new Map();
     private activeRouteIds: number[] = defaultActiveRoutes;
     private currentRouteID: BehaviorSubject<number> = new BehaviorSubject(INITIAL_ROUTE_ID);
+
+    activeRoutesChanged: EventEmitter<void> = new EventEmitter();
 
     constructor(private transloc: TranslocService) { }
 
@@ -58,12 +60,15 @@ export class RouteService {
 
     addToActiveRoute(routeId: number): void {
         this.activeRouteIds.push(routeId);
+        this.activeRoutesChanged.emit();
     }
 
     removeFromActiveRoute(routeId: number): void {
         const removeIndex = this.activeRouteIds.indexOf(routeId);
-        if (removeIndex >= 0)
-            this.activeRouteIds = this.activeRouteIds.splice(removeIndex, 1);
+        if (removeIndex >= 0) {
+            this.activeRouteIds.splice(removeIndex, 1);
+            this.activeRoutesChanged.emit();
+        }
         else
             console.error(`the route id specified is not in the array of active routes`);
     }

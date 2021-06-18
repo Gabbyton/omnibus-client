@@ -44,7 +44,8 @@ export class BusService {
     }
 
     getBusesToDisplay(changeRoute?: boolean): Observable<any> {
-        if (this.vehicles == null || (changeRoute ?? false)) { // determine whether the bus map should be created or reset
+        changeRoute = changeRoute ?? false;
+        if (this.vehicles == null || changeRoute) { // determine whether the bus map should be created or reset
             return this.createBusesToDisplay();
         } else {
             return this.getCurrentBusPositions().pipe(

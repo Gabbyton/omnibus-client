@@ -21,7 +21,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // field for rendering
   displayMarkers: any[] = [];
   drawSegmentSuperset: { segmentOptions: any, segmentSet: any[] }[] = [];
-  displayVehicles: Map<number, any>;
+  displayVehicles: Map<number, any> = new Map();
   currentStopMarker: any;
 
   private vehicleUpdateTimerSubscription: Subscription;
@@ -54,6 +54,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.prefetchMapData();
     // listen to changes to active routes
     this.routeService.activeRoutesChanged.subscribe(_ => {
+      this.unsubscribeFromBusTimer();
       this.updateMapObjects(true);
     });
   }
@@ -69,18 +70,17 @@ export class MapComponent implements OnInit, OnDestroy {
   prefetchMapData() {
     this.updateMapObjects();
     this.initMap();
-    this.routeService.currentRouteIDObs.subscribe(newCurrentRouteID => {
-      this.changeRoute(newCurrentRouteID);
-    });
   }
 
   updateMapObjects(changeRoute?: boolean): void {
+    // reset map-rendered artifacts
     this.displayMarkers = [];
     this.drawSegmentSuperset = [];
+    this.displayVehicles.clear();
     // TODO: get array of shared intersections and display an intersection icon respectively
     for (const activeRouteId of this.routeService.activeRoutes) {
       const routeColor = this.routeService.getRouteColor(activeRouteId);
-      this.displayMarkers.concat(this.stopService.getStopsToDisplay(activeRouteId));
+      this.displayMarkers = this.displayMarkers.concat(this.stopService.getStopsToDisplay(activeRouteId));
       this.drawSegmentSuperset.push({
         segmentOptions: { strokeColor: `#${routeColor}` },
         segmentSet: this.segmentService.getSegment(activeRouteId)
@@ -88,12 +88,6 @@ export class MapComponent implements OnInit, OnDestroy {
     }
     if (this.routeService.activeRoutes.length > 0)
       this.startBusTimer(changeRoute);
-  }
-
-  changeRoute(newRoute: number): void {
-    // TODO: change the zoom and center level to see all of route area
-    // TODO: implement new change route, differentiate between visible and active routes
-    this.updateMapObjects(true);
   }
 
   changeCurrentStop(newStopId: number, displayMarkerIndex: number) {
@@ -106,21 +100,23 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   startBusTimer(changeRoute?: boolean): void {
-    if (this.vehicleUpdateTimerSubscription != null) {
-      this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
-    }
+    this.unsubscribeFromBusTimer();
     this.vehicleUpdateTimerSubscription = timer(0, defaultRefreshMillis).pipe(
       concatMap(_ => this.busService.getBusesToDisplay(changeRoute)),
-      tap(_ => { changeRoute = false }),
+      tap(_ => { changeRoute = false }), // set change route to false for this timer after first iteration
     ).subscribe(busesToDisplay => {
       this.displayVehicles = busesToDisplay;
     });
   }
 
-  ngOnDestroy(): void {
+  private unsubscribeFromBusTimer() {
     if (this.vehicleUpdateTimerSubscription != null) {
       this.vehicleUpdateTimerSubscription.unsubscribe();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeFromBusTimer();
   }
 }
 
