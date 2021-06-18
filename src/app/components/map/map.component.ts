@@ -8,7 +8,6 @@ import { BusService } from '../../utils/data/model-services/bus.service';
 import { RouteService } from '../../utils/data/model-services/route.service';
 import { SegmentService } from '../../utils/data/model-services/segment.service';
 import { StopMarker } from 'src/app/utils/data/models/stop-marker.model';
-import { SocketService } from 'src/app/utils/data/web-services/socket.service';
 
 const mapDefaultZoom = 17;
 
@@ -21,7 +20,7 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
   // field for rendering
   displayMarkers: any[] = [];
-  drawSegmentSet: any[] = [];
+  drawSegmentSuperset: { segmentOptions: any, segmentSet: any[] }[] = [];
   displayVehicles: Map<number, any>;
   currentStopMarker: any;
 
@@ -47,7 +46,6 @@ export class MapComponent implements OnInit {
     private busService: BusService,
     private routeService: RouteService,
     private segmentService: SegmentService,
-    private socketService: SocketService,
   ) { }
 
   ngOnInit() {
@@ -72,16 +70,21 @@ export class MapComponent implements OnInit {
   }
 
   updateMapObjects(routeId: number, changeRoute?: boolean): void {
-    this.displayMarkers = this.stopService.getStopsToDisplay(routeId);
-    this.drawSegmentSet = this.segmentService.getSegment(routeId);
-    this.changeSegmentColor();
-    this.startBusTimer(routeId, changeRoute);
-  }
-
-  changeSegmentColor() {
-    this.segmentOptions = {
-      strokeColor: (`#${this.routeService.getRouteColor(this.routeService.currentRouteIDValue)}`),
+    this.displayMarkers = [];
+    this.drawSegmentSuperset = [];
+    // TODO: get array of shared intersections and display an intersection icon respectively
+    for (const activeRouteId of this.routeService.activeRoutes) {
+      const routeColor = this.routeService.getRouteColor(activeRouteId);
+      for (const stops of this.stopService.getStopsToDisplay(activeRouteId)) {
+        this.displayMarkers.push(stops);
+      }
+      this.drawSegmentSuperset.push({
+        segmentOptions: { strokeColor: `#${routeColor}` },
+        segmentSet: this.segmentService.getSegment(activeRouteId)
+      });
     }
+    console.log(this.drawSegmentSuperset);
+    this.startBusTimer(routeId, changeRoute);
   }
 
   changeRoute(newRoute: number): void {

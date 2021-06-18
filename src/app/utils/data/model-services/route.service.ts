@@ -5,12 +5,13 @@ import { TranslocService } from "../web-services/transloc.service";
 import { Route } from "../models/route.model";
 
 const INITIAL_ROUTE_ID = 8004946;
-
+const defaultActiveRoutes = [8004946, 8004948];
 @Injectable({
     providedIn: 'root',
 })
 export class RouteService {
     private routes: Map<number, Route> = new Map();
+    private activeRouteIds: number[] = defaultActiveRoutes;
     private currentRouteID: BehaviorSubject<number> = new BehaviorSubject(INITIAL_ROUTE_ID);
 
     constructor(private transloc: TranslocService) { }
@@ -43,11 +44,25 @@ export class RouteService {
         return this.routes.get(routeID).color;
     }
 
+    get activeRoutes(): number[] {
+        return this.activeRouteIds;
+    }
+
     getAllRoutes(): Route[] {
         return <Route[]>Array.from(this.routes.values());
     }
 
     setCurrentRoute(newCurrentRouteID: number) {
         return this.currentRouteID.next(newCurrentRouteID);
+    }
+
+    addToActiveRoute(routeId: number) {
+        this.activeRouteIds.push(routeId);
+    }
+
+    removeFromActiveRoute(routeId: number) {
+        const removeIndex = this.activeRouteIds.indexOf(routeId);
+        if (removeIndex >= 0)
+            this.activeRouteIds = this.activeRouteIds.splice(removeIndex, 1);
     }
 }

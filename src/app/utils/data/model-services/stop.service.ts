@@ -33,7 +33,7 @@ export class StopService {
                 stop.stop_id,
                 stop.location,
                 stop.name,
-                this.routeService.getRouteColor(this.routeService.currentRouteIDValue)
+                this.routeService.getRouteColor(routeId),
             ).toJSON());
     }
 
