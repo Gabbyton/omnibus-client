@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
 import { Subscription, timer } from "rxjs";
@@ -16,7 +16,7 @@ const defaultRefreshMillis = 500;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
   // field for rendering
   displayMarkers: any[] = [];
@@ -50,8 +50,12 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // TODO: add error handling to transloc data retrievals
-    // TODO: get rid of backlog
+    // TODO: get rid of data backlog if possible, i.e. vehicles skipping back
     this.prefetchMapData();
+    // listen to changes to active routes
+    this.routeService.activeRoutesChanged.subscribe(_ => {
+      this.updateMapObjects(true);
+    });
   }
 
   initMap() {
@@ -82,12 +86,13 @@ export class MapComponent implements OnInit {
         segmentSet: this.segmentService.getSegment(activeRouteId)
       });
     }
-    this.startBusTimer(changeRoute);
+    if (this.routeService.activeRoutes.length > 0)
+      this.startBusTimer(changeRoute);
   }
 
   changeRoute(newRoute: number): void {
     // TODO: change the zoom and center level to see all of route area
-    this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
+    // TODO: implement new change route, differentiate between visible and active routes
     this.updateMapObjects(true);
   }
 
@@ -101,12 +106,21 @@ export class MapComponent implements OnInit {
   }
 
   startBusTimer(changeRoute?: boolean): void {
+    if (this.vehicleUpdateTimerSubscription != null) {
+      this.vehicleUpdateTimerSubscription.unsubscribe(); // unsubscribe to prevent data leaks
+    }
     this.vehicleUpdateTimerSubscription = timer(0, defaultRefreshMillis).pipe(
       concatMap(_ => this.busService.getBusesToDisplay(changeRoute)),
       tap(_ => { changeRoute = false }),
     ).subscribe(busesToDisplay => {
       this.displayVehicles = busesToDisplay;
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.vehicleUpdateTimerSubscription != null) {
+      this.vehicleUpdateTimerSubscription.unsubscribe();
+    }
   }
 }
 
