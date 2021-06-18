@@ -44,12 +44,8 @@ export class RoutesListComponent implements OnInit {
 
   toggleRouteVisibility(route: Route) {
     const routeId = parseInt(route.route_id);
-    console.log(`route to toggle: ${routeId}`);
-    console.log(this.isRouteActive(route));
     if (this.isRouteActive(route)) { // if route is active, set to inactive
       this.activeRouteIds.set(routeId, false);
-      console.log('i triggerd');
-      
       this.routeService.removeFromActiveRoute(routeId);
     } else {
       this.activeRouteIds.set(routeId, true);
