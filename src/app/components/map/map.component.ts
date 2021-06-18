@@ -10,7 +10,7 @@ import { SegmentService } from '../../utils/data/model-services/segment.service'
 import { StopMarker } from 'src/app/utils/data/models/stop-marker.model';
 
 const mapDefaultZoom = 17;
-
+const defaultRefreshMillis = 500;
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -36,7 +36,7 @@ export class MapComponent implements OnInit {
     disableDoubleClickZoom: true,
     maxZoom: 20,
     minZoom: 8,
-    gestureHandling: "greedy", // TODO: add once testing on actual devices
+    gestureHandling: "greedy",
     disableDefaultUI: true,
   }
   segmentOptions: google.maps.PolylineOptions;
@@ -55,6 +55,7 @@ export class MapComponent implements OnInit {
   }
 
   initMap() {
+    // coordinates for case western reserve university
     this.mapCenter = {
       lat: 41.504324915824725,
       lng: -81.60848998642432,
@@ -64,7 +65,7 @@ export class MapComponent implements OnInit {
   prefetchMapData() {
     this.updateMapObjects();
     this.initMap();
-    this.routeService.currentRouteIDSubject.subscribe(newCurrentRouteID => {
+    this.routeService.currentRouteIDObs.subscribe(newCurrentRouteID => {
       this.changeRoute(newCurrentRouteID);
     });
   }
@@ -75,15 +76,12 @@ export class MapComponent implements OnInit {
     // TODO: get array of shared intersections and display an intersection icon respectively
     for (const activeRouteId of this.routeService.activeRoutes) {
       const routeColor = this.routeService.getRouteColor(activeRouteId);
-      for (const stops of this.stopService.getStopsToDisplay(activeRouteId)) {
-        this.displayMarkers.push(stops);
-      }
+      this.displayMarkers.concat(this.stopService.getStopsToDisplay(activeRouteId));
       this.drawSegmentSuperset.push({
         segmentOptions: { strokeColor: `#${routeColor}` },
         segmentSet: this.segmentService.getSegment(activeRouteId)
       });
     }
-    console.log(this.drawSegmentSuperset);
     this.startBusTimer(changeRoute);
   }
 
@@ -103,7 +101,7 @@ export class MapComponent implements OnInit {
   }
 
   startBusTimer(changeRoute?: boolean): void {
-    this.vehicleUpdateTimerSubscription = timer(0, 500).pipe(
+    this.vehicleUpdateTimerSubscription = timer(0, defaultRefreshMillis).pipe(
       concatMap(_ => this.busService.getBusesToDisplay(changeRoute)),
       tap(_ => { changeRoute = false }),
     ).subscribe(busesToDisplay => {

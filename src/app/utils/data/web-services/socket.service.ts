@@ -18,7 +18,7 @@ export class SocketService {
     }
   }
 
-  private get socketInstance() {
+  private get socketInstance(): any {
     return this.socket.ioSocket;
   }
 

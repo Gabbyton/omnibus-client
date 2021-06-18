@@ -28,7 +28,7 @@ export class RouteService {
         );
     }
 
-    get currentRouteIDSubject() {
+    get currentRouteIDObs(): BehaviorSubject<number> {
         return this.currentRouteID;
     }
 
@@ -52,17 +52,19 @@ export class RouteService {
         return <Route[]>Array.from(this.routes.values());
     }
 
-    setCurrentRoute(newCurrentRouteID: number) {
+    setCurrentRoute(newCurrentRouteID: number): void {
         return this.currentRouteID.next(newCurrentRouteID);
     }
 
-    addToActiveRoute(routeId: number) {
+    addToActiveRoute(routeId: number): void {
         this.activeRouteIds.push(routeId);
     }
 
-    removeFromActiveRoute(routeId: number) {
+    removeFromActiveRoute(routeId: number): void {
         const removeIndex = this.activeRouteIds.indexOf(routeId);
         if (removeIndex >= 0)
             this.activeRouteIds = this.activeRouteIds.splice(removeIndex, 1);
+        else
+            console.error(`the route id specified is not in the array of active routes`);
     }
 }
